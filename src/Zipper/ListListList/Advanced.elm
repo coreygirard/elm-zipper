@@ -7,7 +7,7 @@ module Zipper.ListListList.Advanced exposing
 
 {-| A zipper with a list of selected elements.
 
-Note: if you don't need to transform elements when they move between selected and deselected, you should use `Zipper3.SelectList.Simple` instead. It has a cleaner API allowed by this special case.
+**Note**: If all zipper elements are of the same type, use [`Zipper.ListListList`](Zipper.ListListList) instead. It has a simpler API.
 
 
 # Definition

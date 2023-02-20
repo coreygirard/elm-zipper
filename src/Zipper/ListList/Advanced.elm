@@ -6,6 +6,8 @@ module Zipper.ListList.Advanced exposing
 
 {-| A library for a template type.
 
+**Note**: If all zipper elements are of the same type, use [`Zipper.ListList`](Zipper.ListList) instead. It has a simpler API.
+
 
 # Definition
 

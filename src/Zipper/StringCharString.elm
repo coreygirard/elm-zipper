@@ -42,7 +42,7 @@ type alias Zipper =
 -}
 singleton : Char -> Zipper
 singleton elem =
-    ( [], elem, [] )
+    Zipper.ListElemList.singleton elem
 
 
 {-| Attempt to move selection to left
@@ -52,7 +52,7 @@ singleton elem =
     ( [], 3, [ 4, 5 ] ) |> moveLeft == Err ( [], 3, [ 4, 5 ] )
 
 -}
-moveLeft : Zipper -> Result Zipper Zipper
+moveLeft : Zipper -> Maybe Zipper
 moveLeft zipper =
     Zipper.ListElemList.moveLeft zipper
 
@@ -67,4 +67,4 @@ moveLeft zipper =
 tryMoveLeft : Zipper -> Zipper
 tryMoveLeft zipper =
     Zipper.ListElemList.moveLeft zipper
-        |> Result.Extra.merge
+        |> Maybe.withDefault zipper
