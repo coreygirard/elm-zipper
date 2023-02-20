@@ -1,10 +1,13 @@
-module Zipper3.SelectList.Simple exposing
+module Zipper.ListListList exposing
     ( Zipper
     , empty
+    , getLeft
     , moveLeftToLeft
     )
 
 {-| A special case of `Zipper3.SelectList.Zipper` where all elements have the same type.
+
+If you're working with Chars, check out [`Zipper.StringStringString`](Zipper.StringStringString)
 
 
 # Definition
@@ -17,19 +20,24 @@ module Zipper3.SelectList.Simple exposing
 @docs empty
 
 
+# Get
+
+@docs getLeft
+
+
 # Move
 
 @docs moveLeftToLeft
 
 -}
 
-import Zipper3.SelectList
+import Zipper.ListListList.Advanced as Adv
 
 
 {-| A list type that must contain at least one element
 -}
 type alias Zipper a =
-    Zipper3.SelectList.Zipper a a
+    ( List a, List a, List a )
 
 
 {-| Create a new `Zipper`
@@ -51,4 +59,11 @@ empty =
 -}
 moveLeftToLeft : Zipper a -> Result (Zipper a) (Zipper a)
 moveLeftToLeft zipper =
-    Zipper3.SelectList.moveLeftToLeft identity identity zipper
+    Adv.moveLeftToLeft identity zipper
+
+
+{-| Set selection to last element
+-}
+getLeft : Zipper a -> List a
+getLeft zipper =
+    Adv.getLeft zipper

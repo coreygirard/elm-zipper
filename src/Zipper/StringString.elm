@@ -1,4 +1,4 @@
-module Zipper2.Text exposing
+module Zipper.StringString exposing
     ( Zipper
     , toStrings
     )
@@ -17,13 +17,13 @@ module Zipper2.Text exposing
 
 -}
 
-import Zipper2
+import Zipper.ListList
 
 
 {-| A list type that must contain at least one element
 -}
 type alias Zipper =
-    Zipper2.Zipper Char
+    ( List Char, List Char )
 
 
 {-| Create a new `Zipper2`

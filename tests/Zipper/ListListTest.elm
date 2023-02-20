@@ -1,18 +1,18 @@
-module Zipper2Test exposing (..)
+module Zipper.ListListTest exposing (..)
 
 import Expect exposing (Expectation)
 import Fuzz exposing (..)
 import Test exposing (..)
-import Zipper2 exposing (..)
+import Zipper.ListList exposing (..)
 
 
 suite : Test
 suite =
-    describe "Zipper2"
-        [ describe "Zipper2.empty"
+    describe "Zipper.ListList"
+        [ describe "Zipper.ListList.empty"
             [ test "handles basic operation" <|
                 \_ ->
-                    Zipper2.empty
+                    Zipper.ListList.empty
                         |> Expect.equal ( [], [] )
             ]
         ]

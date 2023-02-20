@@ -1,4 +1,4 @@
-module Zipper3.SelectElem.Text exposing
+module Zipper.StringCharString exposing
     ( Zipper
     , singleton
     , moveLeft
@@ -6,7 +6,7 @@ module Zipper3.SelectElem.Text exposing
 
 {-| A zipper type that is stores a single selected character, with a list of characters on either side. Probably most useful for terminal-like interfaces where the cursor selects a character rather than lying between characters.
 
-A special case of `Zipper3.SelectElem.Simple` for when the elements are `Char`, and some helper functions
+A special case of [`Zipper.ListElemList`](Zipper.ListElemList) for when the elements are `Char`, and some helper functions
 
 
 # Definition
@@ -26,13 +26,13 @@ A special case of `Zipper3.SelectElem.Simple` for when the elements are `Char`, 
 -}
 
 import Result.Extra
-import Zipper3.SelectElem.Simple
+import Zipper.ListElemList
 
 
 {-| A list type that must contain at least one element
 -}
 type alias Zipper =
-    Zipper3.SelectElem.Simple.Zipper Char
+    ( List Char, Char, List Char )
 
 
 {-| Create a new `Zipper`
@@ -54,7 +54,7 @@ singleton elem =
 -}
 moveLeft : Zipper -> Result Zipper Zipper
 moveLeft zipper =
-    Zipper3.SelectElem.Simple.moveLeft zipper
+    Zipper.ListElemList.moveLeft zipper
 
 
 {-| Attempt to move selection to left, return unchanged zipper on failure
@@ -66,5 +66,5 @@ moveLeft zipper =
 -}
 tryMoveLeft : Zipper -> Zipper
 tryMoveLeft zipper =
-    Zipper3.SelectElem.Simple.moveLeft zipper
+    Zipper.ListElemList.moveLeft zipper
         |> Result.Extra.merge

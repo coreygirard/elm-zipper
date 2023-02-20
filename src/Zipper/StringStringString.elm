@@ -1,4 +1,4 @@
-module Zipper3.SelectList.Text exposing
+module Zipper.StringStringString exposing
     ( Zipper
     , empty
     )
@@ -17,13 +17,13 @@ module Zipper3.SelectList.Text exposing
 
 -}
 
-import Zipper3.SelectList.Simple
+import Zipper.ListListList
 
 
 {-| A list type that must contain at least one element
 -}
 type alias Zipper =
-    Zipper3.SelectList.Simple.Zipper Char
+    ( List Char, List Char, List Char )
 
 
 {-| Create a new `Zipper`
@@ -45,4 +45,10 @@ empty =
 -}
 moveLeftToLeft : Zipper -> Result Zipper Zipper
 moveLeftToLeft zipper =
-    Zipper3.SelectList.Simple.moveLeftToLeft zipper
+    Zipper.ListListList.moveLeftToLeft zipper
+
+
+getLeft : Zipper -> String
+getLeft zipper =
+    Zipper.ListListList.getLeft zipper
+        |> String.fromList

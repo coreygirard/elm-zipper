@@ -1,0 +1,14 @@
+{
+  "root": "../src",
+  "tests": ["Zipper.ListList",
+    "Zipper.StringString",
+    "Zipper.ListElemList",
+    "Zipper.ListElemList.Advanced",
+    "Zipper.StringCharString",
+    "Zipper.ListListList",
+    "Zipper.ListListList.Advanced",
+    "Zipper.StringStringString",
+    "Zipper.StringStringString.WithCursor",
+    "./README.md"
+  ]
+}

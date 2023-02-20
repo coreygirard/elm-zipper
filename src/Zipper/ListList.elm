@@ -1,9 +1,11 @@
-module Zipper2 exposing
+module Zipper.ListList exposing
     ( Zipper
     , empty
     )
 
 {-| A library for a template type.
+
+If you're working with Chars, check out [`Zipper.StringString`](Zipper.StringString)
 
 
 # Definition
@@ -17,7 +19,7 @@ module Zipper2 exposing
 
 -}
 
---import List.Extra
+import Zipper.ListList.Advanced
 
 
 {-| A list type that must contain at least one element
@@ -28,7 +30,7 @@ type alias Zipper a =
 
 {-| Create a new `Zipper2`
 
-    make "hello" == ( "hello", "hello" )
+    empty --> ( [], [] )
 
 -}
 empty : Zipper a
