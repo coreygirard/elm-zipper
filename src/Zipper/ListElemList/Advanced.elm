@@ -1,17 +1,24 @@
 module Zipper.ListElemList.Advanced exposing
     ( Zipper
-    , singleton
-    , fromZipperListList, toZipperListList
-    , length, position
-    , getLeft, getSelected, getRight
-    , setLeft, setSelected, setRight, dropLeft, dropLeftToNonemptyList, dropRight, dropRightToNonemptyList
-    , moveLeft, tryMoveLeft, moveLeftUntil, moveLeftN, moveRight, tryMoveRight, moveRightN, selectNth, selectFirst, selectLast
-    , map, mapLeft, mapRight, updateLeft, updateSelected, updateRight
+    , singleton, fromTuple, fromZipperListList, fromZipperListListList
+    , toTuple, toZipperListList, toZipperListListList, toNonemptyListDropLeft, toNonemptyListDropRight
+    , length, lengthLeft, lengthRight, position
+    , selectFirst, selectLast, selectNth
+    , moveLeft, tryMoveLeft, moveLeftUntil, moveLeftN, moveRight, tryMoveRight, moveRightN, moveLeftNNonnegative, moveRightNNonnegative
+    , getLeft, getSelected, getRight, getAt, getAtClamp, getAtRelative, getAtRelativeClamp
+    , setLeft, setSelected, setRight, setAt, setAtClamp
+    , insertAtFirst, insertAtLast, insertToLeft, insertToRight
+    , map, mapLeft, mapRight, indexedMap, indexedMapRelative
+    , filter
+    , updateLeft, updateSelected, updateRight, updateAt, updateAtClamp
     )
 
 {-| A zipper with a single selected element.
 
 **Note**: If all zipper elements are of the same type, use [`Zipper.ListElemList`](Zipper.ListElemList) instead. It has a simpler API.
+
+  - General case of [`Zipper.ListElemList`](Zipper.ListElemList)
+  - General case of [`Zipper.StringCharString`](Zipper.StringCharString)
 
 
 # Definition
@@ -21,43 +28,62 @@ module Zipper.ListElemList.Advanced exposing
 
 # Create
 
-@docs singleton
+@docs singleton, fromTuple, fromZipperListList, fromZipperListListList
 
 
-# To/from other Zipper types
+# To other types
 
-@docs fromZipperListList, toZipperListList
+@docs toTuple, toZipperListList, toZipperListListList, toNonemptyListDropLeft, toNonemptyListDropRight
 
 
 # Utilities
 
-@docs length, position
+@docs length, lengthLeft, lengthRight, position
+
+
+# Select (rename?)
+
+@docs selectFirst, selectLast, selectNth
+
+
+# Move (rename?)
+
+@docs moveLeft, tryMoveLeft, moveLeftUntil, moveLeftN, moveRight, tryMoveRight, moveRightN, moveLeftNNonnegative, moveRightNNonnegative
 
 
 # Get
 
-@docs getLeft, getSelected, getRight
+@docs getLeft, getSelected, getRight, getAt, getAtClamp, getAtRelative, getAtRelativeClamp
 
 
 # Set
 
-@docs setLeft, setSelected, setRight, dropLeft, dropLeftToNonemptyList, dropRight, dropRightToNonemptyList
+@docs setLeft, setSelected, setRight, setAt, setAtClamp
 
 
-# Move
+# Insert
 
-@docs moveLeft, tryMoveLeft, moveLeftUntil, moveLeftN, moveRight, tryMoveRight, moveRightN, selectNth, selectFirst, selectLast
+@docs insertAtFirst, insertAtLast, insertToLeft, insertToRight
 
 
-# Mapping
+# Map
 
-@docs map, mapLeft, mapRight, updateLeft, updateSelected, updateRight
+@docs map, mapLeft, mapRight, indexedMap, indexedMapRelative
+
+
+# Filter
+
+@docs filter
+
+
+# Update
+
+@docs updateLeft, updateSelected, updateRight, updateAt, updateAtClamp
 
 -}
 
 import List.Extra
 import Result.Extra
-import Zipper.ListList.Advanced
 
 
 {-| A list type that must contain at least one element
@@ -76,31 +102,43 @@ singleton elem =
     ( [], elem, [] )
 
 
-{-| Create a new `Zipper`
+{-| -}
+fromTuple : ( List a, b, List c ) -> Zipper a b c
+fromTuple ( a, b, c ) =
+    ( List.reverse a, b, c )
 
-    singleton 0 --> ( [], 0, [] )
 
--}
+{-| -}
 length : Zipper a b c -> Int
 length ( a, _, c ) =
     List.length a + 1 + List.length c
 
 
-{-| Create a new `Zipper`
+{-| -}
+lengthLeft : Zipper a b c -> Int
+lengthLeft ( a, _, c ) =
+    List.length a
 
-    singleton 0 --> ( [], 0, [] )
 
--}
+{-| -}
+lengthRight : Zipper a b c -> Int
+lengthRight ( a, _, c ) =
+    List.length c
+
+
+{-| -}
 position : Zipper a b c -> Int
 position ( a, _, c ) =
     List.length a
 
 
-{-| Create a new `Zipper`
+{-| -}
+toTuple : Zipper a b c -> ( List a, b, List c )
+toTuple ( a, b, c ) =
+    ( List.reverse a, b, c )
 
-    singleton 0 --> ( [], 0, [] )
 
--}
+{-| -}
 toList : (a -> d) -> (b -> d) -> (c -> d) -> Zipper a b c -> List d
 toList fA fB fC ( a, b, c ) =
     (a |> List.reverse |> List.map fA)
@@ -241,7 +279,7 @@ selectFirst fAB fBC ( before, selected, after ) =
             ( before, selected, after )
 
 
-{-| Set selection to Nth element
+{-| Try to set selection to Nth element, returning Nothing on failure
 -}
 selectNth : (a -> b) -> (b -> c) -> (c -> b) -> (b -> a) -> Int -> Zipper a b c -> Maybe (Zipper a b c)
 selectNth fAB fBC fCB fBA n ( before, selected, after ) =
@@ -276,75 +314,75 @@ selectLast fBA fCB ( before, selected, after ) =
             ( before, selected, after )
 
 
-{-| To [`Zipper.ListList.Zipper`](Zipper.ListList#Zipper) by dropping selected element
+{-| To [`Zipper.ListList.Zipper.Advanced`](Zipper.ListList.Advanced#Zipper) by dropping selected element
 
     ( [ 2, 1 ], 3, [ 4, 5 ] )
         |> toZipperListList
         --> ( [ 2, 1 ], [ 4, 5 ] )
 
 -}
-toZipperListList : Zipper a b c -> Zipper.ListList.Advanced.Zipper a c
+toZipperListList : Zipper a b c -> ( List a, List c )
 toZipperListList ( left, _, right ) =
     ( left, right )
 
 
-{-| From [`Zipper.ListList.Zipper`](Zipper.ListList#Zipper), by providing selected element.
+{-| From [`Zipper.ListList.Zipper.Advanced`](Zipper.ListList.Advanced#Zipper), by providing selected element.
 
     ( [ 2, 1 ], [ 4, 5 ] )
         |> fromZipperListList 3
         --> ( [ 2, 1 ], 3, [ 4, 5 ] )
 
 -}
-fromZipperListList : b -> Zipper.ListList.Advanced.Zipper a c -> Zipper a b c
+fromZipperListList : b -> ( List a, List c ) -> Zipper a b c
 fromZipperListList selected ( left, right ) =
     ( left, selected, right )
 
 
-{-| Set left side of zipper to the empty list
+{-| To [`Zipper.ListListList.Zipper.Advanced`](Zipper.ListListList.Advanced#Zipper) by providing function to convert selected element to selected list.
 
     ( [ 2, 1 ], 3, [ 4, 5 ] )
-        |> dropLeft
-        --> ( [], 3, [ 4, 5 ] )
+        |> toZipperListList
+        --> ( [ 2, 1 ], [ 4, 5 ] )
 
 -}
-dropLeft : Zipper a b c -> Zipper a b c
-dropLeft ( _, selected, right ) =
-    ( [], selected, right )
+toZipperListListList : (b1 -> List b2) -> Zipper a b1 c -> ( List a, List b2, List c )
+toZipperListListList f ( left, selected, right ) =
+    ( left, f selected, right )
+
+
+{-| From [`Zipper.ListListList.Zipper.Advanced`](Zipper.ListListList.Advanced#Zipper), by providing function to convert selected list to selected element.
+
+    ( [ 2, 1 ], [ 4, 5 ] )
+        |> fromZipperListList 3
+        --> ( [ 2, 1 ], 3, [ 4, 5 ] )
+
+-}
+fromZipperListListList : (List b1 -> b2) -> ( List a, List b1, List c ) -> Zipper a b2 c
+fromZipperListListList f ( left, selected, right ) =
+    ( left, f selected, right )
 
 
 {-| Convert zipper to a nonempty list by dropping all left elements. Fully compatible with [coreygirard/elm-nonempty-list](https://package.elm-lang.org/packages/coreygirard/elm-nonempty-list/latest/)
 
     ( [ 2, 1 ], 3, [ 4, 5 ] )
-        |> dropLeftToNonemptyList
+        |> toNonemptyListDropLeft
         --> ( 3, [ 4, 5 ] )
 
 -}
-dropLeftToNonemptyList : Zipper a b c -> ( b, List c )
-dropLeftToNonemptyList ( _, selected, right ) =
+toNonemptyListDropLeft : Zipper a b c -> ( b, List c )
+toNonemptyListDropLeft ( _, selected, right ) =
     ( selected, right )
-
-
-{-| Set left side of zipper to the empty list
-
-    ( [ 2, 1 ], 3, [ 4, 5 ] )
-        |> dropRight
-        --> ( [ 2, 1 ], 3, [] )
-
--}
-dropRight : Zipper a b c -> Zipper a b c
-dropRight ( left, selected, _ ) =
-    ( left, selected, [] )
 
 
 {-| Convert zipper to a nonempty list by dropping all left elements. Fully compatible with [coreygirard/elm-nonempty-list](https://package.elm-lang.org/packages/coreygirard/elm-nonempty-list/latest/). Note that the relative order of elements changes to fit the nonempty list type.
 
     ( [ 2, 1 ], 3, [ 4, 5 ] )
-        |> dropRightToNonemptyList
+        |> toNonemptyListDropRight
         --> ( 3, [ 1, 2 ] )
 
 -}
-dropRightToNonemptyList : Zipper a b c -> ( b, List a )
-dropRightToNonemptyList ( left, selected, _ ) =
+toNonemptyListDropRight : Zipper a b c -> ( b, List a )
+toNonemptyListDropRight ( left, selected, _ ) =
     ( selected, List.reverse left )
 
 
@@ -457,3 +495,149 @@ updateSelected f ( left, selected, right ) =
 updateRight : (List c1 -> List c2) -> Zipper a b c1 -> Zipper a b c2
 updateRight f ( left, selected, right ) =
     ( left, selected, f right )
+
+
+{-| -}
+getAt : (a -> d) -> (b -> d) -> (c -> d) -> Int -> Zipper a b c -> Maybe d
+getAt fAD fBD fCD i zipper =
+    getAtRelative fAD fBD fCD (i - position zipper) zipper
+
+
+{-| -}
+getAtClamp : (a -> d) -> (b -> d) -> (c -> d) -> Int -> Zipper a b c -> d
+getAtClamp fAD fBD fCD i zipper =
+    getAtRelativeClamp fAD fBD fCD (i - position zipper) zipper
+
+
+{-| -}
+getAtRelative : (a -> d) -> (b -> d) -> (c -> d) -> Int -> Zipper a b c -> Maybe d
+getAtRelative fAD fBD fCD i ( left, selected, right ) =
+    if i == 0 then
+        selected
+            |> fBD
+            |> Just
+
+    else if i < 0 then
+        left
+            |> List.Extra.getAt (i * -1 - 1)
+            |> Maybe.map fAD
+
+    else
+        right
+            |> List.Extra.getAt (i - 1)
+            |> Maybe.map fCD
+
+
+{-| -}
+getAtRelativeClamp : (a -> d) -> (b -> d) -> (c -> d) -> Int -> Zipper a b c -> d
+getAtRelativeClamp fAD fBD fCD i ( left, selected, right ) =
+    if i == 0 then
+        selected
+            |> fBD
+
+    else if i < 0 then
+        left
+            |> List.Extra.getAt (i * -1 |> clamp 0 (List.length left))
+            |> Maybe.map fAD
+            |> Maybe.withDefault (fBD selected)
+
+    else
+        right
+            |> List.Extra.getAt (i |> clamp 0 (List.length right))
+            |> Maybe.map fCD
+            |> Maybe.withDefault (fBD selected)
+
+
+{-| -}
+setAt : Zipper a b c -> Zipper a b c
+setAt zipper =
+    zipper
+
+
+{-| -}
+setAtClamp : Zipper a b c -> Zipper a b c
+setAtClamp zipper =
+    zipper
+
+
+{-| -}
+updateAt : Zipper a b c -> Zipper a b c
+updateAt zipper =
+    zipper
+
+
+{-| -}
+updateAtClamp : Zipper a b c -> Zipper a b c
+updateAtClamp zipper =
+    zipper
+
+
+type Position
+    = BeforeSelected
+    | Selected
+    | AfterSelected
+
+
+{-| -}
+indexedMap :
+    (Position -> Int -> a1 -> a2)
+    -> (Int -> b1 -> b2)
+    -> (Position -> Int -> c1 -> c2)
+    -> Zipper a1 b1 c1
+    -> Zipper a2 b2 c2
+indexedMap fA fB fC ( left, selected, right ) =
+    ( left
+        |> List.reverse
+        |> List.indexedMap (\i elem -> fA BeforeSelected i elem)
+        |> List.reverse
+    , fB (List.length left) selected
+    , right
+        |> List.indexedMap (\i elem -> fC AfterSelected (i + 1 + List.length left) elem)
+    )
+
+
+{-| -}
+indexedMapRelative :
+    (Position -> Int -> a1 -> a2)
+    -> (b1 -> b2)
+    -> (Position -> Int -> c1 -> c2)
+    -> Zipper a1 b1 c1
+    -> Zipper a2 b2 c2
+indexedMapRelative fA fB fC ( left, selected, right ) =
+    ( List.indexedMap (\i elem -> fA BeforeSelected (i * -1 + 1) elem) left
+    , fB selected
+    , List.indexedMap (\i elem -> fC AfterSelected (i + 1) elem) right
+    )
+
+
+{-| -}
+filter : (a -> Bool) -> (c -> Bool) -> Zipper a b c -> Zipper a b c
+filter fA fC ( left, selected, right ) =
+    ( List.filter fA left
+    , selected
+    , List.filter fC right
+    )
+
+
+{-| -}
+insertAtFirst : a -> Zipper a b c -> Zipper a b c
+insertAtFirst elem ( before, selected, after ) =
+    ( before ++ [ elem ], selected, after )
+
+
+{-| -}
+insertAtLast : c -> Zipper a b c -> Zipper a b c
+insertAtLast elem ( before, selected, after ) =
+    ( before, selected, after ++ [ elem ] )
+
+
+{-| -}
+insertToLeft : a -> Zipper a b c -> Zipper a b c
+insertToLeft elem ( before, selected, after ) =
+    ( [ elem ] ++ before, selected, after )
+
+
+{-| -}
+insertToRight : c -> Zipper a b c -> Zipper a b c
+insertToRight elem ( before, selected, after ) =
+    ( before, selected, [ elem ] ++ after )

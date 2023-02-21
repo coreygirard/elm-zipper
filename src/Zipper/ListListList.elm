@@ -9,6 +9,9 @@ module Zipper.ListListList exposing
 
 If you're working with Chars, check out [`Zipper.StringStringString`](Zipper.StringStringString)
 
+  - Special case of [`Zipper.ListListList.Advanced`](Zipper.ListListList.Advanced)
+  - General case of [`Zipper.StringString`](Zipper.StringString)
+
 
 # Definition
 
@@ -42,7 +45,7 @@ type alias Zipper a =
 
 {-| Create a new `Zipper`
 
-    make "hello" == ( "hello", "hello" )
+    empty --> ( [], [], [] )
 
 -}
 empty : Zipper a
@@ -52,9 +55,13 @@ empty =
 
 {-| Attempt to move left edge of selection to left
 
-    ( [ 2, 1 ], [ 3, 4 ], [ 5, 6 ] ) |> moveLeftToLeft == Ok ( [ 1 ], [ 2, 3, 4 ], [ 5, 6 ] )
+    ( [ 2, 1 ], [ 3, 4 ], [ 5, 6 ] )
+        |> moveLeftToLeft
+        --> Ok ( [ 1 ], [ 2, 3, 4 ], [ 5, 6 ] )
 
-    ( [], [ 3, 4 ], [ 5, 6 ] ) |> moveLeftToLeft == Err ( [], [ 3, 4 ], [ 5, 6 ] )
+    ( [], [ 3, 4 ], [ 5, 6 ] )
+        |> moveLeftToLeft
+        --> Err ( [], [ 3, 4 ], [ 5, 6 ] )
 
 -}
 moveLeftToLeft : Zipper a -> Result (Zipper a) (Zipper a)

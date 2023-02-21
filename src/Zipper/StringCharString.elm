@@ -8,6 +8,9 @@ module Zipper.StringCharString exposing
 
 A special case of [`Zipper.ListElemList`](Zipper.ListElemList) for when the elements are `Char`, and some helper functions
 
+  - Special case of [`Zipper.ListElemList.Advanced`](Zipper.ListElemList.Advanced)
+  - Special case of [`Zipper.ListElemList`](Zipper.ListElemList)
+
 
 # Definition
 
@@ -43,6 +46,31 @@ type alias Zipper =
 singleton : Char -> Zipper
 singleton elem =
     Zipper.ListElemList.singleton elem
+
+
+{-| Create a new `Zipper`
+
+    singleton 'a' == ( [], 'a', [] )
+
+-}
+toStrings : Zipper -> ( String, String, String )
+toStrings ( a, b, c ) =
+    ( a |> List.reverse |> String.fromList
+    , [ b ] |> String.fromList
+    , c |> String.fromList
+    )
+
+
+{-| Create a new `Zipper`
+
+    singleton 'a' == ( [], 'a', [] )
+
+-}
+toString : Zipper -> String
+toString zipper =
+    zipper
+        |> Zipper.ListElemList.toList
+        |> String.fromList
 
 
 {-| Attempt to move selection to left

@@ -1,9 +1,14 @@
 module Zipper.StringStringString exposing
     ( Zipper
     , empty
+    , getLeft
+    , moveLeftToLeft
     )
 
 {-| A special case of `Zipper3.SelectList.Simple` for when the elements are `Char`, and some helper functions
+
+  - Special case of [`Zipper.ListListList.Advanced`](Zipper.ListListList.Advanced)
+  - Special case of [`Zipper.ListListList`](Zipper.ListListList)
 
 
 # Definition
@@ -14,6 +19,16 @@ module Zipper.StringStringString exposing
 # Create
 
 @docs empty
+
+
+# Get
+
+@docs getLeft
+
+
+# Move
+
+@docs moveLeftToLeft
 
 -}
 
@@ -38,9 +53,13 @@ empty =
 
 {-| Attempt to move left edge of selection to left
 
-    ( [ 2, 1 ], [ 3, 4 ], [ 5, 6 ] ) |> moveLeftToLeft == Ok ( [ 1 ], [ 2, 3, 4 ], [ 5, 6 ] )
+    ( [ '2', '1' ], [ '3', '4' ], [ '5', '6' ] )
+        |> moveLeftToLeft
+        --> Ok ( [ '1' ], [ '2', '3', '4' ], [ '5', '6' ] )
 
-    ( [], [ 3, 4 ], [ 5, 6 ] ) |> moveLeftToLeft == Err ( [], [ 3, 4 ], [ 5, 6 ] )
+    ( [], [ '3', '4' ], [ '5', '6' ] )
+        |> moveLeftToLeft
+        --> Err ( [], [ '3', '4' ], [ '5', '6' ] )
 
 -}
 moveLeftToLeft : Zipper -> Result Zipper Zipper
@@ -48,6 +67,7 @@ moveLeftToLeft zipper =
     Zipper.ListListList.moveLeftToLeft zipper
 
 
+{-| -}
 getLeft : Zipper -> String
 getLeft zipper =
     Zipper.ListListList.getLeft zipper

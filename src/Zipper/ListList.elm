@@ -7,6 +7,9 @@ module Zipper.ListList exposing
 
 If you're working with Chars, check out [`Zipper.StringString`](Zipper.StringString)
 
+  - Special case of [`Zipper.ListList.Advanced`](Zipper.ListList.Advanced)
+  - General case of [`Zipper.StringString`](Zipper.StringString)
+
 
 # Definition
 

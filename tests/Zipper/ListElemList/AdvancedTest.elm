@@ -87,4 +87,41 @@ suite =
                         |> Zipper.ListElemList.Advanced.selectNth identity identity identity identity -1
                         |> Expect.equal Nothing
             ]
+        , describe "Zipper.ListElemList.Advanced.getAt"
+            [ test "handles out-of-range negative" <|
+                \_ ->
+                    ( [ 3, 2, 1 ], 4, [ 5, 6, 7 ] )
+                        |> Zipper.ListElemList.Advanced.getAt identity identity identity -1
+                        |> Expect.equal Nothing
+            , test "handles first element" <|
+                \_ ->
+                    ( [ 3, 2, 1 ], 4, [ 5, 6, 7 ] )
+                        |> Zipper.ListElemList.Advanced.getAt identity identity identity 0
+                        |> Expect.equal (Just 1)
+            , test "handles before selection" <|
+                \_ ->
+                    ( [ 3, 2, 1 ], 4, [ 5, 6, 7 ] )
+                        |> Zipper.ListElemList.Advanced.getAt identity identity identity 2
+                        |> Expect.equal (Just 3)
+            , test "handles selected element" <|
+                \_ ->
+                    ( [ 3, 2, 1 ], 4, [ 5, 6, 7 ] )
+                        |> Zipper.ListElemList.Advanced.getAt identity identity identity 3
+                        |> Expect.equal (Just 4)
+            , test "handles after selection" <|
+                \_ ->
+                    ( [ 3, 2, 1 ], 4, [ 5, 6, 7 ] )
+                        |> Zipper.ListElemList.Advanced.getAt identity identity identity 4
+                        |> Expect.equal (Just 5)
+            , test "handles last element" <|
+                \_ ->
+                    ( [ 3, 2, 1 ], 4, [ 5, 6, 7 ] )
+                        |> Zipper.ListElemList.Advanced.getAt identity identity identity 6
+                        |> Expect.equal (Just 7)
+            , test "handles out-of-range high" <|
+                \_ ->
+                    ( [ 3, 2, 1 ], 4, [ 5, 6, 7 ] )
+                        |> Zipper.ListElemList.Advanced.getAt identity identity identity 7
+                        |> Expect.equal Nothing
+            ]
         ]

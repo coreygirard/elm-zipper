@@ -4,7 +4,7 @@ module Zipper.StringStringString.WithCursor exposing
     , arrowLeft, arrowLeftWithShift, arrowRight, arrowRightWithShift, typeKey
     )
 
-{-| A special case of `Zipper3.SelectList.Simple` for when the elements are `Char`, and some helper functions
+{-| Not a clear special case or general case of any of the other zipper types.
 
 
 # Definition

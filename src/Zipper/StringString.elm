@@ -5,6 +5,9 @@ module Zipper.StringString exposing
 
 {-| A library for a template type.
 
+  - Special case of [`Zipper.ListList.Advanced`](Zipper.ListList.Advanced)
+  - Special case of [`Zipper.ListList`](Zipper.ListList)
+
 
 # Definition
 

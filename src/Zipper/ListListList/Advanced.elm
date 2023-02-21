@@ -1,6 +1,7 @@
 module Zipper.ListListList.Advanced exposing
     ( Zipper
     , empty
+    , fromZipperListList, toZipperListList, fromZipperListElemList, toZipperListElemList
     , getLeft
     , moveLeftToLeft
     )
@@ -8,6 +9,9 @@ module Zipper.ListListList.Advanced exposing
 {-| A zipper with a list of selected elements.
 
 **Note**: If all zipper elements are of the same type, use [`Zipper.ListListList`](Zipper.ListListList) instead. It has a simpler API.
+
+  - General case of [`Zipper.ListListList`](Zipper.ListListList)
+  - General case of [`Zipper.StringStringString`](Zipper.StringStringString)
 
 
 # Definition
@@ -18,6 +22,11 @@ module Zipper.ListListList.Advanced exposing
 # Create
 
 @docs empty
+
+
+# From/to other Zippers
+
+@docs fromZipperListList, toZipperListList, fromZipperListElemList, toZipperListElemList
 
 
 # Get
