@@ -1,14 +1,14 @@
 module Zipper.ListElemList exposing
     ( Zipper
     , singleton, fromTuple, fromZipperListList, fromZipperListListList
-    , toList, toZipperListList, toZipperListListList
+    , toTuple, toList, toZipperListList, toZipperListListList
     , length, lengthLeft, lengthRight, position
-    , getFirst, getLeft, getSelected, getRight, getLast
-    , setFirst, setLeft, setSelected, setRight, setLast
+    , getFirst, getLeft, getSelected, getRight, getLast, getAt, getAtClamp, getAtRelative, getAtRelativeClamp
+    , setFirst, setLeft, setSelected, setRight, setLast, setAt, setAtClamp, setAtRelative, setAtRelativeClamp
     , map, mapLeft, mapRight, IndexMethod(..), Position(..), indexedMap, indexedMapLeft, indexedMapSelected, indexedMapRight
-    , update, updateLeft, updateSelected, updateRight
+    , update, updateLeft, updateSelected, updateRight, updateAt, updateAtClamp, updateAtRelative, updateAtRelativeClamp
     , filter, filterLeft, filterRight, indexedFilter, indexedFilterLeft, indexedFilterRight
-    , moveLeft, tryMoveLeft, moveRight, tryMoveRight
+    , moveLeft, tryMoveLeft, moveLeftUntil, moveRight, tryMoveRight, moveRightUntil
     , insertFirst, insertLast, insertLeftOfSelected, insertRightOfSelected
     , sortKeepElem, sortByKeepElem, sortWithKeepElem, sortKeepIndex, sortByKeepIndex, sortWithKeepIndex
     , reverse, reverseLeft, reverseRight
@@ -35,7 +35,7 @@ If you're working with Chars, check out [`Zipper.StringCharString`](Zipper.Strin
 
 # To
 
-@docs toList, toZipperListList, toZipperListListList
+@docs toTuple, toList, toZipperListList, toZipperListListList
 
 
 # Length
@@ -45,12 +45,12 @@ If you're working with Chars, check out [`Zipper.StringCharString`](Zipper.Strin
 
 # Get
 
-@docs getFirst, getLeft, getSelected, getRight, getLast
+@docs getFirst, getLeft, getSelected, getRight, getLast, getAt, getAtClamp, getAtRelative, getAtRelativeClamp
 
 
 # Set
 
-@docs setFirst, setLeft, setSelected, setRight, setLast
+@docs setFirst, setLeft, setSelected, setRight, setLast, setAt, setAtClamp, setAtRelative, setAtRelativeClamp
 
 
 # Map
@@ -60,7 +60,7 @@ If you're working with Chars, check out [`Zipper.StringCharString`](Zipper.Strin
 
 # Update
 
-@docs update, updateLeft, updateSelected, updateRight
+@docs update, updateLeft, updateSelected, updateRight, updateAt, updateAtClamp, updateAtRelative, updateAtRelativeClamp
 
 
 # Filter
@@ -70,7 +70,7 @@ If you're working with Chars, check out [`Zipper.StringCharString`](Zipper.Strin
 
 # Move
 
-@docs moveLeft, tryMoveLeft, moveRight, tryMoveRight
+@docs moveLeft, tryMoveLeft, moveLeftUntil, moveRight, tryMoveRight, moveRightUntil
 
 
 # Insert
@@ -104,9 +104,47 @@ type alias Zipper a =
     ( List a, a, List a )
 
 
-{-| Create a new `Zipper`
+{-| Specifies different ways of indexing a zipper. Used with `indexedMap` and `indexedFilter` and similar functions
 
-    singleton 0 --> ([],0,[])
+    fromTuple ( [ 0, 0 ], 0, [ 0, 0, 0, 0 ] )
+        |> indexedMap FromFirst (\_ i _ -> i)
+        --> fromTuple ( [ 0, 1 ], 2, [ 3, 4, 5, 6 ] )
+
+    fromTuple ( [ 0, 0 ], 0, [ 0, 0, 0, 0 ] )
+        |> indexedMap FromLast (\_ i _ -> i)
+        --> fromTuple ( [ 6, 5 ], 4, [ 3, 2, 1, 0 ] )
+
+    fromTuple ( [ 0, 0 ], 0, [ 0, 0, 0, 0 ] )
+        |> indexedMap FromSelection (\_ i _ -> i)
+        --> fromTuple ( [ 2, 1 ], 0, [ 1, 2, 3, 4 ] )
+
+    fromTuple ( [ 0, 0 ], 0, [ 0, 0, 0, 0 ] )
+        |> indexedMap FromEdges (\_ i _ -> i)
+        --> fromTuple ( [ 0, 1 ], 2, [ 3, 2, 1, 0 ] )
+
+    fromTuple ( [ 0, 0, 0, 0, 0 ], 0, [ 0 ] )
+        |> indexedMap FromEdges (\_ i _ -> i)
+        --> fromTuple ( [ 0, 1, 2, 3, 2 ], 1, [ 0 ] )
+
+-}
+type IndexMethod
+    = FromFirst
+    | FromLast
+    | FromSelection
+    | FromEdges
+
+
+{-| Passed to the user-provided function by `indexedMap` and similar functions to specify the current element's location relative to the selected element
+-}
+type Position
+    = Left
+    | Selected
+    | Right
+
+
+{-| Create a zipper with a single element
+
+    singleton 0 --> ( [], 0, [] )
 
 -}
 singleton : a -> Zipper a
@@ -114,61 +152,43 @@ singleton elem =
     ( [], elem, [] )
 
 
-{-| Create a new `Zipper`
-
-    singleton 0 --> ([],0,[])
-
--}
+{-| -}
 fromTuple : ( List a, a, List a ) -> Zipper a
 fromTuple ( a, b, c ) =
     ( List.reverse a, b, c )
 
 
-{-| Create a new `Zipper`
+{-| -}
+toTuple : Zipper a -> ( List a, a, List a )
+toTuple ( a, b, c ) =
+    ( List.reverse a, b, c )
 
-    singleton 0 --> ( [], 0, [] )
 
--}
+{-| -}
 toList : Zipper a -> List a
 toList ( a, b, c ) =
     List.reverse a ++ [ b ] ++ c
 
 
-{-| Create a new `Zipper`
-
-    singleton 0 --> ( [], 0, [] )
-
--}
+{-| -}
 length : Zipper a -> Int
 length =
     Adv.length
 
 
-{-| Create a new `Zipper`
-
-    singleton 0 --> ( [], 0, [] )
-
--}
+{-| -}
 lengthLeft : Zipper a -> Int
 lengthLeft =
     Adv.lengthLeft
 
 
-{-| Create a new `Zipper`
-
-    singleton 0 --> ( [], 0, [] )
-
--}
+{-| -}
 lengthRight : Zipper a -> Int
 lengthRight =
     Adv.lengthRight
 
 
-{-| Create a new `Zipper`
-
-    singleton 0 --> ( [], 0, [] )
-
--}
+{-| -}
 position : Zipper a -> Int
 position =
     Adv.position
@@ -202,9 +222,10 @@ tryMoveLeft zipper =
     Adv.tryMoveLeft identity identity zipper
 
 
-moveLeftUntil : (a -> Bool) -> Zipper a -> Maybe (Zipper a)
+{-| -}
+moveLeftUntil : (List a -> a -> List a -> Bool) -> Zipper a -> Maybe (Zipper a)
 moveLeftUntil f zipper =
-    Adv.moveLeftUntil identity identity (\_ elem _ -> f elem) zipper
+    Adv.moveLeftUntil identity identity f zipper
 
 
 {-| Attempt to move selection to right
@@ -237,6 +258,12 @@ moveRight zipper =
 tryMoveRight : Zipper a -> Zipper a
 tryMoveRight zipper =
     Adv.tryMoveRight identity identity zipper
+
+
+{-| -}
+moveRightUntil : (List a -> a -> List a -> Bool) -> Zipper a -> Maybe (Zipper a)
+moveRightUntil f zipper =
+    Adv.moveRightUntil identity identity f zipper
 
 
 {-| Map a function over all elements
@@ -332,6 +359,50 @@ setLast elem ( left, selected, right ) =
 
 
 {-| -}
+setAt : Int -> a -> Zipper a -> Maybe (Zipper a)
+setAt i elem ( left, selected, right ) =
+    if i < 0 || i >= length ( left, selected, right ) then
+        Nothing
+
+    else
+        case compare i (List.length left) of
+            EQ ->
+                Just ( left, elem, right )
+
+            LT ->
+                Just
+                    ( left |> List.reverse |> List.Extra.setAt i elem |> List.reverse
+                    , selected
+                    , right
+                    )
+
+            GT ->
+                Just
+                    ( left
+                    , selected
+                    , right |> List.Extra.setAt (i - List.length left - 1) elem
+                    )
+
+
+{-| -}
+setAtClamp : Int -> a -> Zipper a -> Zipper a
+setAtClamp i elem ( left, selected, right ) =
+    ( left, selected, right )
+
+
+{-| -}
+setAtRelative : Int -> a -> Zipper a -> Maybe (Zipper a)
+setAtRelative i elem ( left, selected, right ) =
+    Nothing
+
+
+{-| -}
+setAtRelativeClamp : Int -> a -> Zipper a -> Zipper a
+setAtRelativeClamp i elem ( left, selected, right ) =
+    ( left, selected, right )
+
+
+{-| -}
 mapLeft : (a -> a) -> Zipper a -> Zipper a
 mapLeft =
     Adv.mapLeft
@@ -368,6 +439,50 @@ updateSelected =
 updateRight : (List a -> List a) -> Zipper a -> Zipper a
 updateRight =
     Adv.updateRight
+
+
+{-| -}
+updateAt : Int -> (a -> a) -> Zipper a -> Maybe (Zipper a)
+updateAt i f ( left, selected, right ) =
+    if i < 0 || i >= length ( left, selected, right ) then
+        Nothing
+
+    else
+        case compare i (List.length left) of
+            EQ ->
+                Just ( left, f selected, right )
+
+            LT ->
+                Just
+                    ( left |> List.reverse |> List.Extra.updateAt i f
+                    , selected
+                    , right
+                    )
+
+            GT ->
+                Just
+                    ( left
+                    , selected
+                    , right |> List.Extra.updateAt (i - List.length left - 1) f
+                    )
+
+
+{-| -}
+updateAtClamp : Int -> (a -> a) -> Zipper a -> Zipper a
+updateAtClamp i f ( left, selected, right ) =
+    ( left, selected, right )
+
+
+{-| -}
+updateAtRelative : Int -> (a -> a) -> Zipper a -> Maybe (Zipper a)
+updateAtRelative i f ( left, selected, right ) =
+    Nothing
+
+
+{-| -}
+updateAtRelativeClamp : Int -> (a -> a) -> Zipper a -> Zipper a
+updateAtRelativeClamp i f ( left, selected, right ) =
+    ( left, selected, right )
 
 
 {-| Set selection to first element
@@ -702,7 +817,7 @@ fromZipperListList selected ( left, right ) =
         --> ( [ 2, 1 ], [ 0, 0, 0 ], [ 4, 5 ] )
 
 -}
-toZipperListListList : (a -> List b) -> Zipper a -> ( List a, List b, List a )
+toZipperListListList : (a -> List a) -> Zipper a -> ( List a, List a, List a )
 toZipperListListList f ( left, selected, right ) =
     ( left, f selected, right )
 
@@ -714,62 +829,24 @@ toZipperListListList f ( left, selected, right ) =
         --> ( [ 2, 1 ], 33, [ 4, 5 ] )
 
 -}
-fromZipperListListList : (List b -> a) -> ( List a, List b, List a ) -> Zipper a
+fromZipperListListList : (List a -> a) -> ( List a, List a, List a ) -> Zipper a
 fromZipperListListList f ( left, selected, right ) =
     ( left, f selected, right )
-
-
-{-| Specifies different ways of indexing a zipper. Used with `indexedMap` and `indexedFilter` and similar functions
-
-    fromTuple ( [ 'a', 'b' ], 'c', [ 'd', 'e', 'f', 'g' ] )
-        |> indexedMap FromFirst (\_ i _ -> i)
-        --> fromTuple ( [ 0, 1 ], 2, [ 3, 4, 5, 6 ] )
-
-    fromTuple ( [ 'a', 'b' ], 'c', [ 'd', 'e', 'f', 'g' ] )
-        |> indexedMap FromLast (\_ i _ -> i)
-        --> fromTuple ( [ 6, 5 ], 4, [ 3, 2, 1, 0 ] )
-
-    fromTuple ( [ 'a', 'b' ], 'c', [ 'd', 'e', 'f', 'g' ] )
-        |> indexedMap FromSelection (\_ i _ -> i)
-        --> fromTuple ( [ -2, -1 ], 0, [ 1, 2, 3, 4 ] )
-
-    fromTuple ( [ 'a', 'b' ], 'c', [ 'd', 'e', 'f', 'g' ] )
-        |> indexedMap FromEdges (\_ i _ -> i)
-        --> fromTuple ( [ 0, 1 ], 2, [ 3, 2, 1, 0 ] )
-
-    fromTuple ( [ 'a', 'b', 'c', 'd', 'e' ], 'f', [ 'g' ] )
-        |> indexedMap FromEdges (\_ i _ -> i)
-        --> fromTuple ( [ 0, 1, 2, 3, 2 ], 1, [ 0 ] )
-
--}
-type IndexMethod
-    = FromFirst
-    | FromLast
-    | FromSelection
-    | FromEdges
-
-
-{-| Passed to the user-provided function by `indexedMap` and similar functions to specify the current element's location relative to the selected element
--}
-type Position
-    = BeforeSelected
-    | Selected
-    | AfterSelected
 
 
 {-| -}
 indexedMap : IndexMethod -> (Position -> Int -> a -> b) -> Zipper a -> Zipper b
 indexedMap indexMethod f (( left, selected, right ) as zipper) =
-    ( List.map2 (\i elem -> f BeforeSelected i elem) (getIndexesLeftHelper_ indexMethod zipper) left
+    ( List.map2 (\i elem -> f Left i elem) (getIndexesLeftHelper_ indexMethod zipper) left
     , f Selected (getIndexesSelectedHelper_ indexMethod zipper) selected
-    , List.map2 (\i elem -> f AfterSelected i elem) (getIndexesRightHelper_ indexMethod zipper) right
+    , List.map2 (\i elem -> f Right i elem) (getIndexesRightHelper_ indexMethod zipper) right
     )
 
 
 {-| -}
 indexedMapLeft : IndexMethod -> (Position -> Int -> a -> a) -> Zipper a -> Zipper a
 indexedMapLeft indexMethod f (( left, selected, right ) as zipper) =
-    ( List.map2 (\i elem -> f BeforeSelected i elem) (getIndexesLeftHelper_ indexMethod zipper) left
+    ( List.map2 (\i elem -> f Left i elem) (getIndexesLeftHelper_ indexMethod zipper) left
     , selected
     , right
     )
@@ -789,7 +866,7 @@ indexedMapRight : IndexMethod -> (Position -> Int -> a -> a) -> Zipper a -> Zipp
 indexedMapRight indexMethod f (( left, selected, right ) as zipper) =
     ( left
     , selected
-    , List.map2 (\i elem -> f AfterSelected i elem) (getIndexesRightHelper_ indexMethod zipper) right
+    , List.map2 (\i elem -> f Right i elem) (getIndexesRightHelper_ indexMethod zipper) right
     )
 
 
@@ -804,7 +881,7 @@ getIndexesLeftHelper_ indexMethod ( left, _, right ) =
             List.range (List.length right + 1) (List.length right + 1 + List.length left)
 
         FromSelection ->
-            List.range 1 (List.length left) |> List.map ((*) -1)
+            List.range 1 (List.length left)
 
         FromEdges ->
             List.map2
@@ -870,20 +947,37 @@ filterRight f ( left, selected, right ) =
 
 {-| -}
 indexedFilter : IndexMethod -> (Position -> Int -> a -> Bool) -> Zipper a -> Zipper a
-indexedFilter indexMethod f ( before, selected, after ) =
-    ( before, selected, after )
+indexedFilter indexMethod f (( left, selected, right ) as zipper) =
+    ( List.map2 (\i elem -> ( f Left i elem, elem )) (getIndexesLeftHelper_ indexMethod zipper) left
+        |> List.filter Tuple.first
+        |> List.map Tuple.second
+    , selected
+    , List.map2 (\i elem -> ( f Right i elem, elem )) (getIndexesRightHelper_ indexMethod zipper) right
+        |> List.filter Tuple.first
+        |> List.map Tuple.second
+    )
 
 
 {-| -}
-indexedFilterLeft : Zipper a -> Zipper a
-indexedFilterLeft zipper =
-    zipper
+indexedFilterLeft : IndexMethod -> (Position -> Int -> a -> Bool) -> Zipper a -> Zipper a
+indexedFilterLeft indexMethod f (( left, selected, right ) as zipper) =
+    ( List.map2 (\i elem -> ( f Left i elem, elem )) (getIndexesLeftHelper_ indexMethod zipper) left
+        |> List.filter Tuple.first
+        |> List.map Tuple.second
+    , selected
+    , right
+    )
 
 
 {-| -}
-indexedFilterRight : Zipper a -> Zipper a
-indexedFilterRight zipper =
-    zipper
+indexedFilterRight : IndexMethod -> (Position -> Int -> a -> Bool) -> Zipper a -> Zipper a
+indexedFilterRight indexMethod f (( left, selected, right ) as zipper) =
+    ( left
+    , selected
+    , List.map2 (\i elem -> ( f Right i elem, elem )) (getIndexesRightHelper_ indexMethod zipper) right
+        |> List.filter Tuple.first
+        |> List.map Tuple.second
+    )
 
 
 {-| -}

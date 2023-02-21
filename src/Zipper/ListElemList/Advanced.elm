@@ -4,7 +4,7 @@ module Zipper.ListElemList.Advanced exposing
     , toTuple, toZipperListList, toZipperListListList, toNonemptyListDropLeft, toNonemptyListDropRight
     , length, lengthLeft, lengthRight, position
     , selectFirst, selectLast, selectNth
-    , moveLeft, tryMoveLeft, moveLeftUntil, moveLeftN, moveRight, tryMoveRight, moveRightN, moveLeftNNonnegative, moveRightNNonnegative
+    , moveLeft, tryMoveLeft, moveLeftUntil, moveLeftN, moveLeftNNonnegative, moveRight, tryMoveRight, moveRightN, moveRightUntil, moveRightNNonnegative
     , getLeft, getSelected, getRight, getAt, getAtClamp, getAtRelative, getAtRelativeClamp
     , setLeft, setSelected, setRight, setAt, setAtClamp
     , insertAtFirst, insertAtLast, insertToLeft, insertToRight
@@ -48,7 +48,7 @@ module Zipper.ListElemList.Advanced exposing
 
 # Move (rename?)
 
-@docs moveLeft, tryMoveLeft, moveLeftUntil, moveLeftN, moveRight, tryMoveRight, moveRightN, moveLeftNNonnegative, moveRightNNonnegative
+@docs moveLeft, tryMoveLeft, moveLeftUntil, moveLeftN, moveLeftNNonnegative, moveRight, tryMoveRight, moveRightN, moveRightUntil, moveRightNNonnegative
 
 
 # Get
@@ -193,6 +193,35 @@ moveLeftUntil fAB fBC fStop zipper =
 
             else
                 moveLeftUntil fAB fBC fStop ( a, b, c )
+
+
+{-| Move left until function returns True. If no match found, returns `Nothing`.
+
+    ( [ 3, 2, 1 ], 4, [ 5, 6, 7 ] )
+        |> moveLeftUntil identity identity (\_ n _ -> n == 2)
+        --> Just ( [ 1 ], 2, [ 3, 4, 5, 6, 7 ] )
+
+    ( [ 3, 2, 1 ], 4, [ 5, 6, 7 ] )
+        |> moveLeftUntil identity identity (\_ n _ -> n == 1)
+        --> Just ( [], 1, [ 2, 3, 4, 5, 6, 7 ] )
+
+    ( [ 3, 2, 1 ], 4, [ 5, 6, 7 ] )
+        |> moveLeftUntil identity identity (\_ n _ -> n == 100)
+        --> Nothing
+
+-}
+moveRightUntil : (b -> a) -> (c -> b) -> (List a -> b -> List c -> Bool) -> Zipper a b c -> Maybe (Zipper a b c)
+moveRightUntil fBA fCB fStop zipper =
+    case moveRight fBA fCB zipper of
+        Nothing ->
+            Nothing
+
+        Just ( a, b, c ) ->
+            if fStop a b c then
+                Just ( a, b, c )
+
+            else
+                moveRightUntil fBA fCB fStop ( a, b, c )
 
 
 {-| -}
