@@ -1,0 +1,27 @@
+rpl 1.1
+
+package elmdocs
+
+function_name = { [a-z] / [A-Z] / [0-9] }+
+-- test function_name accepts "functionName", "functionName2"
+
+
+alias spaces = " "*
+
+alias newline = "\n"
+
+alias docs_header_prefix = "# "
+
+docs_header_value = [^\n]*
+
+alias docs_header = { docs_header_prefix docs_header_value }
+
+docs_line = { "@docs " function_name { spaces "," spaces function_name }* }
+
+outline_section = { docs_header newline newline docs_line }
+
+alias function_colon = " : "
+
+function_signature_type = [^\n]+
+
+function_signature = { function_name function_colon function_signature_type }

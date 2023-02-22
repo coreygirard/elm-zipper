@@ -1,17 +1,28 @@
 make:
 	elm make
+	make gen-table
 
 test:
 	make
+	make gen-table
 	elm-verify-examples
 	elm-test
 
 coverage:
 	make
+	make gen-table
 	elm-verify-examples
 	elm-coverage
 
+format:
+	elm-format src/ --yes
+
+gen-table:
+	make format
+	python3 rosie/run.py
+
 preview:
+	python3 rosie/run.py
 	elm-doc-preview
 
 cloc:
