@@ -2,6 +2,7 @@ import os
 from pprint import pprint
 import json
 import subprocess
+import re
 
 
 def get_filepaths():
@@ -46,9 +47,8 @@ def get_outline_data(signatures):
             for function in functions:
                 if function not in table[header]:
                     table[header][function] = []
-                table[header][function].append(
-                    (filepath, signatures.get((filepath, function), "[ERROR]"))
-                )
+                line_num, type_ = signatures.get((filepath, function), (-1, "[ERROR]"))
+                table[header][function].append((filepath, line_num, type_))
     return table
 
 
@@ -60,14 +60,28 @@ def get_file_signatures(filepath):
     return json.loads(out)["subs"]
 
 
+def get_newline_indexes(filepath):
+    with open(filepath, "r") as f:
+        text = f.read()
+    return [i for i, e in enumerate(text) if e == "\n"]
+
+
+def calc_line_number(indexes, n):
+    return len([i for i in indexes if i <= n]) + 1  # empirically derived
+
+
 def get_signature_data():
     table = {}
     for filepath in get_filepaths():
+        print(filepath)
+        newline_indexes = get_newline_indexes(filepath)
         data = get_file_signatures(filepath)
         for elem in data:
+            elem = elem["subs"][0]
             name, type_ = elem["subs"]
             slug = (filepath, name["data"])
-            table[slug] = type_["data"]
+            line_num = calc_line_number(newline_indexes, elem["subs"][0]["s"])
+            table[slug] = (line_num, type_["data"])
     return table
 
 
@@ -75,8 +89,14 @@ def to_markdown_function(name, locations):
     yield "### " + name + "\n"
     yield f"| filepath | signature |\n"
     yield f"| :--- | :--- |\n"
-    for location, type_ in sorted(locations):
-        yield f"| [{location}]() | `{type_}` |\n"
+    for location, line_num, type_ in sorted(locations):
+        location = location[4:]  # remove 'src/'
+        if line_num == -1:
+            line_link = "/"
+        else:
+            line_link = f"https://github.com/coreygirard/elm-zipper/blob/main/src/{location}#L{line_num}"
+        type_ = re.sub("[\n ]+", " ", type_)
+        yield f"| [{location}]({line_link}) | `{type_}` |\n"
 
 
 def to_markdown_section(header, body):

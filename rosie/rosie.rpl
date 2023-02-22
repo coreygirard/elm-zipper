@@ -20,8 +20,21 @@ docs_line = { "@docs " function_name { spaces "," spaces function_name }* }
 
 outline_section = { docs_header newline newline docs_line }
 
-alias function_colon = " : "
+alias function_colon = " :"
+
+function_signature_type_trailing_lines = { [\n] " " [^\n]* }
 
 function_signature_type = [^\n]+
 
-function_signature = { function_name function_colon function_signature_type }
+
+function_signature_single_line = { newline function_name function_colon spaces function_signature_type }
+-- test function_signature_single_line accepts "\naaa : Int -> Int"
+-- test function_signature_single_line rejects "fromLeft : Int, fromRight : Int }"
+
+function_type_lines = { function_signature_type_trailing_lines+ }
+
+function_signature_multi_line = { function_name " :" function_type_lines }
+-- test function_signature_multi_line accepts "aaa :\n    Int\n    -> Int\n    -> Int"
+
+
+function_signature = { function_signature_single_line / function_signature_multi_line }

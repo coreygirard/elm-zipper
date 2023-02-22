@@ -22,7 +22,7 @@ gen-table:
 	python3 rosie/run.py
 
 preview:
-	python3 rosie/run.py
+	make gen-table
 	elm-doc-preview
 
 cloc:
