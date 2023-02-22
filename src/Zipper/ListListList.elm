@@ -3,16 +3,17 @@ module Zipper.ListListList exposing
     , empty, fromTuple, fromZipperListList, fromZipperListElemList
     , toTuple, toList, toZipperListList, toZipperListElemList
     , length, lengthLeft, lengthSelection, lengthRight, positionLeft, positionRight, positionLeftFromEnd, positionRightFromEnd
-    , getLeft, getSelection, getRight, getAtRelativeToLeftSplit, getAtRelativeToRightSplit
-    , setLeft, setSelection, setRight, setAtRelativeToLeftSplit, setAtRelativeToRightSplit
-    , map, mapLeft, mapSelection, mapRight, IndexMethod, Position, indexedMap, indexedMapLeft, indexedMapSelection, indexedMapRight
-    , update, updateLeft, updateSelection, updateRight, updateAtRelativeToLeftSplit, updateAtRelativeToRightSplit
+    , getLeft, getSelection, getRight, getAt, getAtRelativeToLeftSplit, getAtRelativeToRightSplit
+    , setLeft, setSelection, setRight, setAt, setAtRelativeToLeftSplit, setAtRelativeToRightSplit
+    , map, mapLeft, mapSelection, mapRight, IndexMethod, Position(..), indexedMap, indexedMapLeft, indexedMapSelection, indexedMapRight
+    , update, updateLeft, updateSelection, updateRight, updateAt, updateAtRelativeToLeftSplit, updateAtRelativeToRightSplit
     , filter, filterLeft, filterSelection, filterRight, indexedFilter, indexedFilterLeft, indexedFilterSelection, indexedFilterRight
     , moveLeftToLeft, tryMoveLeftToLeft, moveLeftToRight, tryMoveLeftToRight, moveRightToLeft, tryMoveRightToLeft, moveRightToRight, tryMoveRightToRight
     , insertFirst, insertLast, insertLeftOfLeftSplit, insertRightOfLeftSplit, insertLeftOfRightSplit, insertRightOfRightSplit
     , sort, sortBy, sortWith
     , reverse, reverseLeft, reverseSelected, reverseRight
     , swapTwo
+    , indexAbsoluteCheck, indexRelativeLeftCheck, indexRelativeRightCheck, indexAbsoluteToRelativeLeft, indexAbsoluteToRelativeRight, indexAbsoluteToRelativeLeftCheck, indexAbsoluteToRelativeRightCheck, indexRelativeLeftToAbsolute, indexRelativeRightToAbsolute, indexRelativeLeftToAbsoluteCheck, indexRelativeRightToAbsoluteCheck, absoluteIndexToPosDists
     )
 
 {-| A special case of `Zipper3.SelectList.Zipper` where all elements have the same type.
@@ -92,8 +93,14 @@ If you're working with Chars, check out [`Zipper.StringStringString`](Zipper.Str
 
 @docs swapTwo
 
+
+# Indexes
+
+@docs indexAbsoluteCheck, indexRelativeLeftCheck, indexRelativeRightCheck, indexAbsoluteToRelativeLeft, indexAbsoluteToRelativeRight, indexAbsoluteToRelativeLeftCheck, indexAbsoluteToRelativeRightCheck, indexRelativeLeftToAbsolute, indexRelativeRightToAbsolute, indexRelativeLeftToAbsoluteCheck, indexRelativeRightToAbsoluteCheck, absoluteIndexToPosDists
+
 -}
 
+import List.Extra
 import Zipper.ListListList.Advanced as Adv
 
 
@@ -118,6 +125,11 @@ type Position
     = Left
     | Selection
     | Right
+
+
+{-| -}
+type alias Dists =
+    { fromLeft : Int, fromRight : Int }
 
 
 {-| Create an empty zipper
@@ -240,13 +252,23 @@ getRight ( _, _, right ) =
 
 {-| -}
 getAt : Int -> Zipper a -> Maybe a
-getAt i zipper =
-    getAtRelative (i - position zipper) zipper
+getAt i ( left, selection, right ) =
+    if i >= 0 && i < length ( left, [], [] ) then
+        List.Extra.getAt i (List.reverse left)
+
+    else if i >= length ( left, [], [] ) && i < length ( left, selection, [] ) then
+        List.Extra.getAt (i + List.length left) selection
+
+    else if i >= length ( left, selection, [] ) && i < length ( left, selection, right ) then
+        List.Extra.getAt (i + length ( left, selection, [] )) right
+
+    else
+        Nothing
 
 
 {-| -}
 getAtRelativeToLeftSplit : Int -> Zipper a -> Maybe a
-getAtRelativeToLeftSplit i ( left, right ) =
+getAtRelativeToLeftSplit i ( left, selection, right ) =
     if i < 0 then
         left
             |> List.Extra.getAt (List.length left - i)
@@ -258,7 +280,7 @@ getAtRelativeToLeftSplit i ( left, right ) =
 
 {-| -}
 getAtRelativeToRightSplit : Int -> Zipper a -> Maybe a
-getAtRelativeToRightSplit i ( left, right ) =
+getAtRelativeToRightSplit i ( left, selection, right ) =
     if i < 0 then
         left
             |> List.Extra.getAt (List.length left - i)
@@ -269,70 +291,141 @@ getAtRelativeToRightSplit i ( left, right ) =
 
 
 {-| -}
-setLeft : Zipper a -> Zipper a
-setLeft zipper =
-    zipper
+setLeft : List a -> Zipper a -> Zipper a
+setLeft left ( _, selection, right ) =
+    ( List.reverse left, selection, right )
 
 
 {-| -}
-setSelection : Zipper a -> Zipper a
-setSelection zipper =
-    zipper
+setSelection : List a -> Zipper a -> Zipper a
+setSelection selection ( left, _, right ) =
+    ( left, selection, right )
 
 
 {-| -}
-setRight : Zipper a -> Zipper a
-setRight zipper =
-    zipper
+setRight : List a -> Zipper a -> Zipper a
+setRight right ( left, selection, _ ) =
+    ( left, selection, right )
 
 
 {-| -}
 setAt : Int -> a -> Zipper a -> Maybe (Zipper a)
-setAt i elem ( left, right ) =
-    if i < 0 || i >= length ( left, right ) then
-        Nothing
-
-    else if i < List.length left then
+setAt i elem ( left, selection, right ) =
+    if i >= 0 && i < length ( left, [], [] ) then
         Just
             ( left |> List.reverse |> List.Extra.setAt i elem |> List.reverse
+            , selection
             , right
             )
 
-    else
+    else if i >= length ( left, [], [] ) && i < length ( left, selection, [] ) then
         Just
             ( left
+            , selection |> List.Extra.setAt (i - List.length left - 1) elem
+            , right
+            )
+
+    else if i >= length ( left, selection, [] ) && i < length ( left, selection, right ) then
+        Just
+            ( left
+            , selection
             , right |> List.Extra.setAt (i - List.length left - 1) elem
             )
 
-
-{-| -}
-map : Zipper a -> Zipper a
-map zipper =
-    zipper
+    else
+        Nothing
 
 
 {-| -}
-mapLeft : Zipper a -> Zipper a
-mapLeft zipper =
-    zipper
+setAtRelativeToLeftSplit : Int -> a -> Zipper a -> Maybe (Zipper a)
+setAtRelativeToLeftSplit i elem ( left, selection, right ) =
+    if i >= 0 && i < length ( left, [], [] ) then
+        Just
+            ( left |> List.reverse |> List.Extra.setAt i elem |> List.reverse
+            , selection
+            , right
+            )
+
+    else if i >= length ( left, [], [] ) && i < length ( left, selection, [] ) then
+        Just
+            ( left
+            , selection |> List.Extra.setAt (i - List.length left - 1) elem
+            , right
+            )
+
+    else if i >= length ( left, selection, [] ) && i < length ( left, selection, right ) then
+        Just
+            ( left
+            , selection
+            , right |> List.Extra.setAt (i - List.length left - 1) elem
+            )
+
+    else
+        Nothing
 
 
 {-| -}
-mapSelection : Zipper a -> Zipper a
-mapSelection zipper =
-    zipper
+setAtRelativeToRightSplit : Int -> a -> Zipper a -> Maybe (Zipper a)
+setAtRelativeToRightSplit i elem ( left, selection, right ) =
+    if i >= 0 && i < length ( left, [], [] ) then
+        Just
+            ( left |> List.reverse |> List.Extra.setAt i elem |> List.reverse
+            , selection
+            , right
+            )
+
+    else if i >= length ( left, [], [] ) && i < length ( left, selection, [] ) then
+        Just
+            ( left
+            , selection |> List.Extra.setAt (i - List.length left - 1) elem
+            , right
+            )
+
+    else if i >= length ( left, selection, [] ) && i < length ( left, selection, right ) then
+        Just
+            ( left
+            , selection
+            , right |> List.Extra.setAt (i - List.length left - 1) elem
+            )
+
+    else
+        Nothing
 
 
 {-| -}
-mapRight : Zipper a -> Zipper a
-mapRight zipper =
-    zipper
+map : (a -> b) -> Zipper a -> Zipper b
+map f ( left, selection, right ) =
+    ( List.map f left
+    , List.map f selection
+    , List.map f right
+    )
 
 
 {-| -}
-indexedMap : Zipper a -> Zipper a
-indexedMap zipper =
-    zipper
+mapLeft : (a -> a) -> Zipper a -> Zipper a
+mapLeft f ( left, selection, right ) =
+    ( List.map f left, selection, right )
+
+
+{-| -}
+mapSelection : (a -> a) -> Zipper a -> Zipper a
+mapSelection f ( left, selection, right ) =
+    ( left, List.map f selection, right )
+
+
+{-| -}
+mapRight : (a -> a) -> Zipper a -> Zipper a
+mapRight f ( left, selection, right ) =
+    ( left, selection, List.map f right )
+
+
+{-| -}
+indexedMap : IndexMethod -> (Position -> Int -> a -> b) -> Zipper a -> Zipper b
+indexedMap indexMethod f (( left, selection, right ) as zipper) =
+    ( List.map2 (\i elem -> f Left i elem) (getIndexesLeftHelper_ indexMethod zipper) left
+    , List.map2 (\i elem -> f Selection i elem) (getIndexesSelectionHelper_ indexMethod zipper) left
+    , List.map2 (\i elem -> f Right i elem) (getIndexesRightHelper_ indexMethod zipper) right
+    )
 
 
 {-| -}
@@ -354,27 +447,120 @@ indexedMapRight zipper =
 
 
 {-| -}
-update : Zipper a -> Zipper a
-update zipper =
-    zipper
+getIndexesLeftHelper_ : IndexMethod -> Zipper a -> List Int
+getIndexesLeftHelper_ indexMethod ( left, selection, right ) =
+    case indexMethod of
+        FromFirst ->
+            List.range 0 (List.length left - 1) |> List.reverse
+
+        FromLast ->
+            List.range (List.length right) (List.length right + List.length left)
+
+        _ ->
+            List.map2
+                min
+                (List.range 0 (List.length left - 1) |> List.reverse)
+                (List.range (List.length right + 1) (List.length right + 1 + List.length left))
 
 
 {-| -}
-updateLeft : Zipper a -> Zipper a
-updateLeft zipper =
-    zipper
+getIndexesSelectionHelper_ : IndexMethod -> Zipper a -> List Int
+getIndexesSelectionHelper_ indexMethod ( left, selection, right ) =
+    case indexMethod of
+        FromFirst ->
+            List.range 0 (List.length left - 1) |> List.reverse
+
+        FromLast ->
+            List.range (List.length right) (List.length right + List.length left)
+
+        _ ->
+            List.map2
+                min
+                (List.range 0 (List.length left - 1) |> List.reverse)
+                (List.range (List.length right + 1) (List.length right + 1 + List.length left))
 
 
 {-| -}
-updateSelection : Zipper a -> Zipper a
-updateSelection zipper =
-    zipper
+getIndexesRightHelper_ : IndexMethod -> Zipper a -> List Int
+getIndexesRightHelper_ indexMethod ( left, selection, right ) =
+    case indexMethod of
+        FromFirst ->
+            List.range (List.length left) (List.length right + List.length left)
+
+        FromLast ->
+            List.range 0 (List.length right - 1) |> List.reverse
+
+        _ ->
+            List.map2
+                min
+                (List.range (List.length left + 1) (List.length right + 1 + List.length left))
+                (List.range 0 (List.length right - 1) |> List.reverse)
 
 
 {-| -}
-updateRight : Zipper a -> Zipper a
-updateRight zipper =
+update : (List a -> List b) -> (List a -> List b) -> (List a -> List b) -> Zipper a -> Zipper b
+update fLeft fSelection fRight ( left, selection, right ) =
+    ( fLeft left, fSelection selection, fRight right )
+
+
+{-| -}
+updateLeft : (List a -> List a) -> Zipper a -> Zipper a
+updateLeft fLeft ( left, selection, right ) =
+    ( fLeft left, selection, right )
+
+
+{-| -}
+updateSelection : (List a -> List a) -> Zipper a -> Zipper a
+updateSelection fSelection ( left, selection, right ) =
+    ( left, fSelection selection, right )
+
+
+{-| -}
+updateRight : (List a -> List a) -> Zipper a -> Zipper a
+updateRight fRight ( left, selection, right ) =
+    ( left, selection, fRight right )
+
+
+{-| -}
+updateAt : Zipper a -> Maybe (Zipper a)
+updateAt zipper =
+    Just zipper
+
+
+{-| -}
+tryUpdateAt : Zipper a -> Zipper a
+tryUpdateAt zipper =
     zipper
+        |> updateAt
+        |> Maybe.withDefault zipper
+
+
+{-| -}
+updateAtRelativeToLeftSplit : Zipper a -> Maybe (Zipper a)
+updateAtRelativeToLeftSplit zipper =
+    Just zipper
+
+
+{-| -}
+tryUpdateAtRelativeToLeftSplit : Zipper a -> Zipper a
+tryUpdateAtRelativeToLeftSplit zipper =
+    zipper
+        |> updateAtRelativeToLeftSplit
+        |> Maybe.withDefault zipper
+
+
+{-| -}
+updateAtRelativeToRightSplit : Zipper a -> Maybe (Zipper a)
+updateAtRelativeToRightSplit zipper =
+    Just zipper
+
+
+{-| -}
+tryUpdateAtRelativeToRightSplit : Zipper a -> Zipper a
+tryUpdateAtRelativeToRightSplit zipper =
+    zipper
+        |> updateAtRelativeToRightSplit
+        |> Maybe.withDefault zipper
 
 
 {-| -}
@@ -427,7 +613,7 @@ indexedFilterRight zipper =
 
 {-| Attempt to move left edge of selection to left
 
-    fromTuple ( [ 2, 1 ], [ 3, 4 ], [ 5, 6 ] )
+    fromTuple ( [ 1, 2 ], [ 3, 4 ], [ 5, 6 ] )
         |> moveLeftToLeft
         --> Ok (fromTuple ( [ 1 ], [ 2, 3, 4 ], [ 5, 6 ] ))
 
@@ -565,3 +751,158 @@ reverseRight zipper =
 swapTwo : Zipper a -> Zipper a
 swapTwo zipper =
     zipper
+
+
+{-| -}
+indexAbsoluteCheck : Zipper a -> Int -> Maybe Position
+indexAbsoluteCheck ( left, selection, right ) i =
+    if i >= 0 && i < length ( left, [], [] ) then
+        Just Left
+
+    else if i >= length ( left, [], [] ) && i < length ( left, selection, [] ) then
+        Just Selection
+
+    else if i >= length ( left, selection, [] ) && i < length ( left, selection, right ) then
+        Just Right
+
+    else
+        Nothing
+
+
+{-| -}
+indexRelativeLeftCheck : Zipper a -> Int -> Maybe Position
+indexRelativeLeftCheck ( left, _, right ) i =
+    if i == 0 then
+        Nothing
+
+    else if i > 0 && i < List.length right then
+        Just Right
+
+    else if i < 0 && i > (List.length left * -1) then
+        Just Left
+
+    else
+        Nothing
+
+
+{-| -}
+indexRelativeRightCheck : Zipper a -> Int -> Maybe Position
+indexRelativeRightCheck ( left, _, right ) i =
+    if i == 0 then
+        Nothing
+
+    else if i > 0 && i < List.length right then
+        Just Right
+
+    else if i < 0 && i > (List.length left * -1) then
+        Just Left
+
+    else
+        Nothing
+
+
+{-| -}
+indexAbsoluteToRelativeLeft : Zipper a -> Int -> Int
+indexAbsoluteToRelativeLeft ( left, _, _ ) i =
+    i * -1 + List.length left
+
+
+{-| -}
+indexAbsoluteToRelativeRight : Zipper a -> Int -> Int
+indexAbsoluteToRelativeRight ( left, _, _ ) i =
+    i * -1 + List.length left
+
+
+{-| -}
+indexAbsoluteToRelativeLeftCheck : Zipper a -> Int -> Maybe Int
+indexAbsoluteToRelativeLeftCheck zipper i =
+    indexAbsoluteToRelativeLeft zipper i
+        |> (\j ->
+                if indexRelativeLeftCheck zipper j == Nothing then
+                    Nothing
+
+                else
+                    Just j
+           )
+
+
+{-| -}
+indexAbsoluteToRelativeRightCheck : Zipper a -> Int -> Maybe Int
+indexAbsoluteToRelativeRightCheck zipper i =
+    indexAbsoluteToRelativeRight zipper i
+        |> (\j ->
+                if indexRelativeRightCheck zipper j == Nothing then
+                    Nothing
+
+                else
+                    Just j
+           )
+
+
+{-| -}
+indexRelativeLeftToAbsolute : Zipper a -> Int -> Int
+indexRelativeLeftToAbsolute ( left, _, _ ) i =
+    (i - List.length left) * -1
+
+
+{-| -}
+indexRelativeRightToAbsolute : Zipper a -> Int -> Int
+indexRelativeRightToAbsolute ( left, _, _ ) i =
+    (i - List.length left) * -1
+
+
+{-| -}
+indexRelativeLeftToAbsoluteCheck : Zipper a -> Int -> Maybe Int
+indexRelativeLeftToAbsoluteCheck zipper i =
+    indexRelativeLeftToAbsolute zipper i
+        |> (\j ->
+                if indexAbsoluteCheck zipper j == Nothing then
+                    Nothing
+
+                else
+                    Just j
+           )
+
+
+{-| -}
+indexRelativeRightToAbsoluteCheck : Zipper a -> Int -> Maybe Int
+indexRelativeRightToAbsoluteCheck zipper i =
+    indexRelativeRightToAbsolute zipper i
+        |> (\j ->
+                if indexAbsoluteCheck zipper j == Nothing then
+                    Nothing
+
+                else
+                    Just j
+           )
+
+
+{-| -}
+absoluteIndexToPosDists : Zipper a -> Int -> Maybe ( Position, Dists )
+absoluteIndexToPosDists ( left, selection, right ) i =
+    if i >= 0 && i < length ( left, [], [] ) then
+        Just
+            ( Left
+            , { fromLeft = i
+              , fromRight = length ( left, [], [] ) - i
+              }
+            )
+
+    else if i >= length ( left, [], [] ) && i < length ( left, selection, [] ) then
+        Just
+            ( Selection
+            , { fromLeft = i - length ( left, [], [] )
+              , fromRight = length ( left, selection, [] ) - i
+              }
+            )
+
+    else if i >= length ( left, selection, [] ) && i < length ( left, selection, right ) then
+        Just
+            ( Right
+            , { fromLeft = i - length ( left, selection, [] )
+              , fromRight = length ( left, selection, right ) - i
+              }
+            )
+
+    else
+        Nothing

@@ -13,6 +13,7 @@ module Zipper.ListElemList exposing
     , sortKeepElem, sortByKeepElem, sortWithKeepElem, sortKeepIndex, sortByKeepIndex, sortWithKeepIndex
     , reverse, reverseLeft, reverseRight
     , swapToFirst, swapToLast, swap, swapTwo
+    , indexAbsoluteCheck, indexRelativeCheck, indexAbsoluteToRelative, indexAbsoluteToRelativeCheck, indexRelativeToAbsolute, indexRelativeToAbsoluteCheck
     )
 
 {-| A special case of [`Zipper.ListElemList.Advanced`](Zipper.ListElemList.Advanced) where all elements have the same type.
@@ -91,6 +92,11 @@ If you're working with Chars, check out [`Zipper.StringCharString`](Zipper.Strin
 # Swap
 
 @docs swapToFirst, swapToLast, swap, swapTwo
+
+
+# Indexes
+
+@docs indexAbsoluteCheck, indexRelativeCheck, indexAbsoluteToRelative, indexAbsoluteToRelativeCheck, indexRelativeToAbsolute, indexRelativeToAbsoluteCheck
 
 -}
 
@@ -1047,3 +1053,73 @@ swap i ( left, selected, right ) =
 swapTwo : Zipper a -> Zipper a
 swapTwo zipper =
     zipper
+
+
+{-| -}
+indexAbsoluteCheck : Zipper a -> Int -> Maybe Position
+indexAbsoluteCheck ( left, selected, right ) i =
+    if i >= 0 && i < List.length left then
+        Just Left
+
+    else if i == List.length left then
+        Just Selected
+
+    else if i >= length ( left, selected, [] ) && i < length ( left, selected, right ) then
+        Just Right
+
+    else
+        Nothing
+
+
+{-| -}
+indexRelativeCheck : Zipper a -> Int -> Maybe Position
+indexRelativeCheck ( left, _, right ) i =
+    if i == 0 then
+        Just Selected
+
+    else if i > 0 && i < List.length right then
+        Just Right
+
+    else if i < 0 && i > (List.length left * -1) then
+        Just Left
+
+    else
+        Nothing
+
+
+{-| -}
+indexAbsoluteToRelative : Zipper a -> Int -> Int
+indexAbsoluteToRelative ( left, _, _ ) i =
+    i * -1 + List.length left
+
+
+{-| -}
+indexAbsoluteToRelativeCheck : Zipper a -> Int -> Maybe Int
+indexAbsoluteToRelativeCheck zipper i =
+    indexAbsoluteToRelative zipper i
+        |> (\j ->
+                if indexAbsoluteCheck zipper j == Nothing then
+                    Nothing
+
+                else
+                    Just j
+           )
+
+
+{-| -}
+indexRelativeToAbsolute : Zipper a -> Int -> Int
+indexRelativeToAbsolute ( left, _, _ ) i =
+    (i - List.length left) * -1
+
+
+{-| -}
+indexRelativeToAbsoluteCheck : Zipper a -> Int -> Maybe Int
+indexRelativeToAbsoluteCheck zipper i =
+    indexRelativeToAbsolute zipper i
+        |> (\j ->
+                if indexRelativeCheck zipper j == Nothing then
+                    Nothing
+
+                else
+                    Just j
+           )

@@ -4,15 +4,16 @@ module Zipper.ListList exposing
     , toTuple, toList, toZipperListElemList, toZipperListListList
     , length, lengthLeft, lengthRight, position
     , getLeft, getRight, getAt, getAtRelative
-    , setLeft, setRight
+    , setLeft, setRight, setAt, setAtRelative
     , map, mapLeft, mapRight, IndexMethod(..), Position(..), indexedMap, indexedMapLeft, indexedMapRight
-    , update, updateLeft, updateRight, updateAt, updateAtRelative
+    , update, updateLeft, updateRight, updateAt, tryUpdateAt, updateAtRelative, tryUpdateAtRelative
     , filter, filterLeft, filterRight, indexedFilter, indexedFilterLeft, indexedFilterRight
     , moveLeft, tryMoveLeft, moveRight, tryMoveRight, moveToFirst, moveToLast, moveToN
     , insertFirst, insertLast, insertLeftOfSplit, insertRightOfSplit
     , sortKeepIndex, sortByKeepIndex, sortWithKeepIndex
     , reverse, reverseLeft, reverseRight
     , swapTwo
+    , indexAbsoluteCheck, indexRelativeCheck, indexAbsoluteToRelative, indexAbsoluteToRelativeCheck, indexRelativeToAbsolute, indexRelativeToAbsoluteCheck
     )
 
 {-| A library for a template type.
@@ -45,12 +46,12 @@ If you're working with Chars, check out [`Zipper.StringString`](Zipper.StringStr
 
 # Get
 
-@docs getLeft, getRight, getAt, getAtClamp, getAtRelative, getAtRelativeClamp
+@docs getLeft, getRight, getAt, getAtRelative
 
 
 # Set
 
-@docs setLeft, setRight, setAt
+@docs setLeft, setRight, setAt, setAtRelative
 
 
 # Map
@@ -91,6 +92,11 @@ If you're working with Chars, check out [`Zipper.StringString`](Zipper.StringStr
 # Swap
 
 @docs swapTwo
+
+
+# Indexes
+
+@docs indexAbsoluteCheck, indexRelativeCheck, indexAbsoluteToRelative, indexAbsoluteToRelativeCheck, indexRelativeToAbsolute, indexRelativeToAbsoluteCheck
 
 -}
 
@@ -228,7 +234,7 @@ getAtRelative i ( left, right ) =
 {-| -}
 setLeft : List a -> Zipper a -> Zipper a
 setLeft left ( _, right ) =
-    ( left, right )
+    ( List.reverse left, right )
 
 
 {-| -}
@@ -240,6 +246,25 @@ setRight right ( left, _ ) =
 {-| -}
 setAt : Int -> a -> Zipper a -> Maybe (Zipper a)
 setAt i elem ( left, right ) =
+    if i < 0 || i >= length ( left, right ) then
+        Nothing
+
+    else if i < List.length left then
+        Just
+            ( left |> List.reverse |> List.Extra.setAt i elem |> List.reverse
+            , right
+            )
+
+    else
+        Just
+            ( left
+            , right |> List.Extra.setAt (i - List.length left - 1) elem
+            )
+
+
+{-| -}
+setAtRelative : Int -> a -> Zipper a -> Maybe (Zipper a)
+setAtRelative i elem ( left, right ) =
     if i < 0 || i >= length ( left, right ) then
         Nothing
 
@@ -376,26 +401,45 @@ updateRight fRight ( left, right ) =
 
 {-| -}
 updateAt : Int -> (a -> a) -> Zipper a -> Maybe (Zipper a)
-updateAt i fRight ( left, right ) =
-    ( left, fRight right )
+updateAt i f ( left, right ) =
+    updateAtRelative (i - List.length left) f ( left, right )
 
 
 {-| -}
 tryUpdateAt : Int -> (a -> a) -> Zipper a -> Zipper a
-tryUpdateAt i fRight ( left, right ) =
-    ( left, fRight right )
+tryUpdateAt i f ( left, right ) =
+    tryUpdateAtRelative (i - List.length left) f ( left, right )
 
 
 {-| -}
 updateAtRelative : Int -> (a -> a) -> Zipper a -> Maybe (Zipper a)
-updateAtRelative i fRight ( left, right ) =
-    ( left, fRight right )
+updateAtRelative i f ( left, right ) =
+    case compare i 0 of
+        EQ ->
+            Nothing
+
+        LT ->
+            case List.Extra.getAt (i * -1) left of
+                Just _ ->
+                    Just ( List.Extra.updateAt (i * -1) f left, right )
+
+                Nothing ->
+                    Nothing
+
+        GT ->
+            case List.Extra.getAt i right of
+                Just _ ->
+                    Just ( left, List.Extra.updateAt i f right )
+
+                Nothing ->
+                    Nothing
 
 
 {-| -}
 tryUpdateAtRelative : Int -> (a -> a) -> Zipper a -> Zipper a
-tryUpdateAtRelative i fRight ( left, right ) =
-    ( left, fRight right )
+tryUpdateAtRelative i f zipper =
+    updateAtRelative i f zipper
+        |> Maybe.withDefault zipper
 
 
 {-| -}
@@ -604,3 +648,70 @@ swapTwo i j zipper =
 
         _ ->
             Nothing
+
+
+{-| -}
+indexAbsoluteCheck : Zipper a -> Int -> Maybe Position
+indexAbsoluteCheck ( left, right ) i =
+    if i >= 0 && i < length ( left, [] ) then
+        Just Left
+
+    else if i >= length ( left, [] ) && i < length ( left, right ) then
+        Just Right
+
+    else
+        Nothing
+
+
+{-| -}
+indexRelativeCheck : Zipper a -> Int -> Maybe Position
+indexRelativeCheck ( left, right ) i =
+    if i == 0 then
+        Nothing
+
+    else if i > 0 && i < List.length right then
+        Just Right
+
+    else if i < 0 && i > (List.length left * -1) then
+        Just Left
+
+    else
+        Nothing
+
+
+{-| -}
+indexAbsoluteToRelative : Zipper a -> Int -> Int
+indexAbsoluteToRelative ( left, _ ) i =
+    i * -1 + List.length left
+
+
+{-| -}
+indexAbsoluteToRelativeCheck : Zipper a -> Int -> Maybe Int
+indexAbsoluteToRelativeCheck zipper i =
+    indexAbsoluteToRelative zipper i
+        |> (\j ->
+                if indexAbsoluteCheck zipper j == Nothing then
+                    Nothing
+
+                else
+                    Just j
+           )
+
+
+{-| -}
+indexRelativeToAbsolute : Zipper a -> Int -> Int
+indexRelativeToAbsolute ( left, _ ) i =
+    (i - List.length left) * -1
+
+
+{-| -}
+indexRelativeToAbsoluteCheck : Zipper a -> Int -> Maybe Int
+indexRelativeToAbsoluteCheck zipper i =
+    indexRelativeToAbsolute zipper i
+        |> (\j ->
+                if indexRelativeCheck zipper j == Nothing then
+                    Nothing
+
+                else
+                    Just j
+           )
