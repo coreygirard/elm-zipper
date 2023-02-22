@@ -10,6 +10,13 @@ def get_filepaths():
     for a, b, c in os.walk("src"):
         for c_ in c:
             out.append(os.path.join(a, c_))
+
+    out = [
+        "src/Zipper/ListList.elm",
+        "src/Zipper/ListListList.elm",
+        "src/Zipper/ListElemList.elm",
+    ]
+
     return out
 
 

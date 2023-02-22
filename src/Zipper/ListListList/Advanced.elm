@@ -3,7 +3,7 @@ module Zipper.ListListList.Advanced exposing
     , empty
     , fromZipperListList, toZipperListList, fromZipperListElemList, toZipperListElemList
     , getLeft
-    , moveLeftToLeft
+    , moveLeftToLeft, moveLeftToLeftUntil
     )
 
 {-| A zipper with a list of selected elements.
@@ -36,7 +36,7 @@ module Zipper.ListListList.Advanced exposing
 
 # Move
 
-@docs moveLeftToLeft
+@docs moveLeftToLeft, moveLeftToLeftUntil
 
 -}
 
@@ -62,14 +62,29 @@ empty =
 
 {-| Attempt to move left edge of selection to left
 -}
-moveLeftToLeft : (a -> b) -> Zipper a b c -> Result (Zipper a b c) (Zipper a b c)
+moveLeftToLeft : (a -> b) -> Zipper a b c -> Maybe (Zipper a b c)
 moveLeftToLeft fAB zipper =
     case zipper of
         ( head :: tail, selected, right ) ->
-            Ok ( tail, fAB head :: selected, right )
+            Just ( tail, fAB head :: selected, right )
 
         ( [], selected, right ) ->
-            Err zipper
+            Nothing
+
+
+{-| -}
+moveLeftToLeftUntil : (a -> b) -> (List a -> List b -> List c -> Bool) -> Zipper a b c -> Maybe (Zipper a b c)
+moveLeftToLeftUntil fAB f zipper =
+    case moveLeftToLeft fAB zipper of
+        Nothing ->
+            Nothing
+
+        Just ( left, selected, right ) ->
+            if f left selected right then
+                Just ( left, selected, right )
+
+            else
+                moveLeftToLeftUntil fAB f ( left, selected, right )
 
 
 {-| Set selection to last element

@@ -1,19 +1,19 @@
 module Zipper.ListElemList exposing
     ( Zipper
-    , singleton, fromTuple, fromZipperListList, fromZipperListListList
+    , singleton, fromTuple, fromListAndIndex, fromZipperListList, fromZipperListListList
     , toTuple, toList, toZipperListList, toZipperListListList
-    , length, lengthLeft, lengthRight, position
+    , length, lengthLeft, lengthRight, position, positionFromEnd
     , getFirst, getLeft, getSelected, getRight, getLast, getAt, getAtClamp, getAtRelative, getAtRelativeClamp
     , setFirst, setLeft, setSelected, setRight, setLast, setAt, setAtClamp, setAtRelative, setAtRelativeClamp
     , map, mapSeparately, mapLeft, mapRight, IndexMethod(..), Position(..), indexedMap, indexedMapLeft, indexedMapSelected, indexedMapRight
     , update, updateSeparately, updateLeft, updateSelected, updateRight, updateAt, updateAtClamp, updateAtRelative, updateAtRelativeClamp
     , filter, filterSeparately, filterLeft, filterRight, indexedFilter, indexedFilterLeft, indexedFilterRight
-    , moveLeft, tryMoveLeft, moveLeftUntil, moveRight, tryMoveRight, moveRightUntil
+    , moveLeft, tryMoveLeft, moveLeftUntil, moveRight, tryMoveRight, moveRightUntil, moveToFirst, moveToN, moveToLast
     , insertFirst, insertLast, insertLeftOfSelected, insertRightOfSelected
     , sortKeepElem, sortByKeepElem, sortWithKeepElem, sortKeepIndex, sortByKeepIndex, sortWithKeepIndex
     , reverse, reverseLeft, reverseRight
-    , swapToFirst, swapToLast, swap, swapTwo
-    , indexAbsoluteCheck, indexRelativeCheck, indexAbsoluteToRelative, indexAbsoluteToRelativeCheck, indexRelativeToAbsolute, indexRelativeToAbsoluteCheck, absoluteIndexToPosDists, relativeIndexToPosDists
+    , swapSelectedWithFirst, swapSelectedWithLast, swapSelectedWithN, swap
+    , Dists, indexAbsoluteCheck, indexRelativeCheck, indexAbsoluteToRelative, indexAbsoluteToRelativeCheck, indexRelativeToAbsolute, indexRelativeToAbsoluteCheck, absoluteIndexToPosDists, relativeIndexToPosDists
     )
 
 {-| A special case of [`Zipper.ListElemList.Advanced`](Zipper.ListElemList.Advanced) where all elements have the same type.
@@ -31,7 +31,7 @@ If you're working with Chars, check out [`Zipper.StringCharString`](Zipper.Strin
 
 # Create
 
-@docs singleton, fromTuple, fromZipperListList, fromZipperListListList
+@docs singleton, fromTuple, fromListAndIndex, fromZipperListList, fromZipperListListList
 
 
 # To
@@ -41,7 +41,7 @@ If you're working with Chars, check out [`Zipper.StringCharString`](Zipper.Strin
 
 # Length
 
-@docs length, lengthLeft, lengthRight, position
+@docs length, lengthLeft, lengthRight, position, positionFromEnd
 
 
 # Get
@@ -71,7 +71,7 @@ If you're working with Chars, check out [`Zipper.StringCharString`](Zipper.Strin
 
 # Move
 
-@docs moveLeft, tryMoveLeft, moveLeftUntil, moveRight, tryMoveRight, moveRightUntil
+@docs moveLeft, tryMoveLeft, moveLeftUntil, moveRight, tryMoveRight, moveRightUntil, moveToFirst, moveToN, moveToLast
 
 
 # Insert
@@ -91,12 +91,12 @@ If you're working with Chars, check out [`Zipper.StringCharString`](Zipper.Strin
 
 # Swap
 
-@docs swapToFirst, swapToLast, swap, swapTwo
+@docs swapSelectedWithFirst, swapSelectedWithLast, swapSelectedWithN, swap
 
 
 # Indexes
 
-@docs indexAbsoluteCheck, indexRelativeCheck, indexAbsoluteToRelative, indexAbsoluteToRelativeCheck, indexRelativeToAbsolute, indexRelativeToAbsoluteCheck, absoluteIndexToPosDists, relativeIndexToPosDists
+@docs Dists, indexAbsoluteCheck, indexRelativeCheck, indexAbsoluteToRelative, indexAbsoluteToRelativeCheck, indexRelativeToAbsolute, indexRelativeToAbsoluteCheck, absoluteIndexToPosDists, relativeIndexToPosDists
 
 -}
 
@@ -170,6 +170,12 @@ fromTuple ( a, b, c ) =
 
 
 {-| -}
+fromListAndIndex : List a -> Int -> Maybe (Zipper a)
+fromListAndIndex elems i =
+    Nothing
+
+
+{-| -}
 toTuple : Zipper a -> ( List a, a, List a )
 toTuple ( a, b, c ) =
     ( List.reverse a, b, c )
@@ -203,6 +209,12 @@ lengthRight =
 position : Zipper a -> Int
 position =
     Adv.position
+
+
+{-| -}
+positionFromEnd : Zipper a -> Int
+positionFromEnd =
+    Adv.positionFromEnd
 
 
 {-| Attempt to move selection to left
@@ -545,15 +557,15 @@ updateAtRelativeClamp i f ( left, selected, right ) =
 
 {-| Set selection to first element
 -}
-selectFirst : Zipper a -> Zipper a
-selectFirst zipper =
-    Adv.selectFirst identity identity zipper
+moveToFirst : Zipper a -> Zipper a
+moveToFirst zipper =
+    Adv.moveToFirst identity identity zipper
 
 
 {-| Set selection to Nth element
 -}
-selectNth : Int -> Zipper a -> Maybe (Zipper a)
-selectNth n ( before, selected, after ) =
+moveToN : Int -> Zipper a -> Maybe (Zipper a)
+moveToN n ( before, selected, after ) =
     let
         allElems =
             toList ( before, selected, after )
@@ -572,9 +584,9 @@ selectNth n ( before, selected, after ) =
 
 {-| Set selection to last element
 -}
-selectLast : Zipper a -> Zipper a
-selectLast zipper =
-    Adv.selectLast identity identity zipper
+moveToLast : Zipper a -> Zipper a
+moveToLast zipper =
+    Adv.moveToLast identity identity zipper
 
 
 {-| Set selection to Nth element
@@ -666,11 +678,11 @@ sortWithKeepElem f ( before, selected, after ) =
 sortKeepIndex : Zipper comparable -> Zipper comparable
 sortKeepIndex zipper =
     zipper
-        |> selectFirst
+        |> moveToFirst
         |> updateRight List.sort
         |> sortFirstPair_
         |> updateRight List.sort
-        |> selectNth (position zipper)
+        |> moveToN (position zipper)
         |> Maybe.withDefault zipper
 
 
@@ -678,11 +690,11 @@ sortKeepIndex zipper =
 sortByKeepIndex : (a -> comparable) -> Zipper a -> Zipper a
 sortByKeepIndex f zipper =
     zipper
-        |> selectFirst
+        |> moveToFirst
         |> updateRight (List.sortBy f)
         |> sortFirstPairBy_ f
         |> updateRight (List.sortBy f)
-        |> selectNth (position zipper)
+        |> moveToN (position zipper)
         |> Maybe.withDefault zipper
 
 
@@ -690,11 +702,11 @@ sortByKeepIndex f zipper =
 sortWithKeepIndex : (a -> a -> Order) -> Zipper a -> Zipper a
 sortWithKeepIndex f zipper =
     zipper
-        |> selectFirst
+        |> moveToFirst
         |> updateRight (List.sortWith f)
         |> sortFirstPairWith_ f
         |> updateRight (List.sortWith f)
-        |> selectNth (position zipper)
+        |> moveToN (position zipper)
         |> Maybe.withDefault zipper
 
 
@@ -763,8 +775,8 @@ filterSeparately fLeft fRight ( left, selected, right ) =
 
 
 {-| -}
-swapToFirst : Zipper a -> Zipper a
-swapToFirst ( before, selected, after ) =
+swapSelectedWithFirst : Zipper a -> Zipper a
+swapSelectedWithFirst ( before, selected, after ) =
     case before of
         head :: tail ->
             ( tail ++ [ selected ], head, after )
@@ -774,8 +786,8 @@ swapToFirst ( before, selected, after ) =
 
 
 {-| -}
-swapToLast : Zipper a -> Zipper a
-swapToLast ( before, selected, after ) =
+swapSelectedWithLast : Zipper a -> Zipper a
+swapSelectedWithLast ( before, selected, after ) =
     case List.Extra.unconsLast after of
         Just ( last, rest ) ->
             ( before, last, rest ++ [ selected ] )
@@ -1084,8 +1096,8 @@ reverseRight ( left, selected, right ) =
 
 
 {-| -}
-swap : Int -> Zipper a -> Maybe (Zipper a)
-swap i ( left, selected, right ) =
+swapSelectedWithN : Int -> Zipper a -> Maybe (Zipper a)
+swapSelectedWithN i ( left, selected, right ) =
     let
         position_ =
             position ( left, selected, right )
@@ -1111,8 +1123,8 @@ swap i ( left, selected, right ) =
 
 
 {-| -}
-swapTwo : Zipper a -> Zipper a
-swapTwo zipper =
+swap : Zipper a -> Zipper a
+swap zipper =
     zipper
 
 

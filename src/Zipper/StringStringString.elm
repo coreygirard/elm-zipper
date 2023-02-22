@@ -62,7 +62,7 @@ empty =
         --> Err ( [], [ '3', '4' ], [ '5', '6' ] )
 
 -}
-moveLeftToLeft : Zipper -> Result Zipper Zipper
+moveLeftToLeft : Zipper -> Maybe Zipper
 moveLeftToLeft zipper =
     Zipper.ListListList.moveLeftToLeft zipper
 

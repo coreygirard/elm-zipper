@@ -6,7 +6,7 @@ module Zipper.ListList.Advanced exposing
     , setLeft, setRight
     , insertAtFirst, insertAtLast, insertToLeft, insertToRight
     , updateLeft, updateRight
-    , moveToRight, moveToLeft, tryMoveToRight, tryMoveToLeft, selectNth
+    , moveToRight, moveToLeft, moveLeftUntil, tryMoveToRight, tryMoveToLeft, moveToN
     , map, mapLeft, mapRight
     )
 
@@ -55,7 +55,7 @@ module Zipper.ListList.Advanced exposing
 
 # Move
 
-@docs moveToRight, moveToLeft, tryMoveToRight, tryMoveToLeft, selectNth
+@docs moveToRight, moveToLeft, moveLeftUntil, tryMoveToRight, tryMoveToLeft, moveToN
 
 
 # Map
@@ -118,14 +118,14 @@ position ( left, _ ) =
 
 {-| Attempt to move split to left
 -}
-moveToLeft : (a -> b) -> Zipper a b -> Result (Zipper a b) (Zipper a b)
+moveToLeft : (a -> b) -> Zipper a b -> Maybe (Zipper a b)
 moveToLeft fAB zipper =
     case zipper of
         ( head :: tail, after ) ->
-            Ok ( tail, fAB head :: after )
+            Just ( tail, fAB head :: after )
 
         ( [], after ) ->
-            Err zipper
+            Nothing
 
 
 {-| Attempt to move split to left, return unchanged zipper on failure
@@ -133,7 +133,22 @@ moveToLeft fAB zipper =
 tryMoveToLeft : (a -> b) -> Zipper a b -> Zipper a b
 tryMoveToLeft fAB zipper =
     moveToLeft fAB zipper
-        |> Result.Extra.merge
+        |> Maybe.withDefault zipper
+
+
+{-| -}
+moveLeftUntil : (a -> b) -> (List a -> List b -> Bool) -> Zipper a b -> Maybe (Zipper a b)
+moveLeftUntil fAB f zipper =
+    case moveToLeft fAB zipper of
+        Nothing ->
+            Nothing
+
+        Just ( left, right ) ->
+            if f left right then
+                Just ( left, right )
+
+            else
+                moveLeftUntil fAB f ( left, right )
 
 
 {-| Attempt to move split to right
@@ -271,20 +286,20 @@ maybeAssert fPred data =
 {-| Attempt to move the split by specifying the length of the resulting left list. If the split would be invalid, eg `n < 0` or `n > length zipper`, returns `Nothing`.
 
     ( [ 2, 1 ], [ 3, 4 ] )
-        |> selectNth identity identity -1
+        |> moveToN identity identity -1
         == Nothing
 
     ( [ 2, 1 ], [ 3, 4 ] )
-        |> selectNth identity identity 1
+        |> moveToN identity identity 1
         == Just ( [ 1 ], [ 2, 3, 4 ] )
 
     ( [ 2, 1 ], [ 3, 4 ] )
-        |> selectNth identity identity 4
+        |> moveToN identity identity 4
         == Just ( [ 4, 3, 2, 1 ], [] )
 
 -}
-selectNth : (a -> b) -> (b -> a) -> Int -> Zipper a b -> Maybe (Zipper a b)
-selectNth fAB fBA n ( left, right ) =
+moveToN : (a -> b) -> (b -> a) -> Int -> Zipper a b -> Maybe (Zipper a b)
+moveToN fAB fBA n ( left, right ) =
     if n < 0 then
         Nothing
 

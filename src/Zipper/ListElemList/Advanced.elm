@@ -2,8 +2,8 @@ module Zipper.ListElemList.Advanced exposing
     ( Zipper
     , singleton, fromTuple, fromZipperListList, fromZipperListListList
     , toTuple, toZipperListList, toZipperListListList, toNonemptyListDropLeft, toNonemptyListDropRight
-    , length, lengthLeft, lengthRight, position
-    , selectFirst, selectLast, selectNth
+    , length, lengthLeft, lengthRight, position, positionFromEnd
+    , moveToFirst, moveToLast, moveToN
     , moveLeft, tryMoveLeft, moveLeftUntil, moveLeftN, moveLeftNNonnegative, moveRight, tryMoveRight, moveRightN, moveRightUntil, moveRightNNonnegative
     , getLeft, getSelected, getRight, getAt, getAtClamp, getAtRelative, getAtRelativeClamp
     , setLeft, setSelected, setRight, setAt, setAtClamp
@@ -38,12 +38,12 @@ module Zipper.ListElemList.Advanced exposing
 
 # Utilities
 
-@docs length, lengthLeft, lengthRight, position
+@docs length, lengthLeft, lengthRight, position, positionFromEnd
 
 
 # Select (rename?)
 
-@docs selectFirst, selectLast, selectNth
+@docs moveToFirst, moveToLast, moveToN
 
 
 # Move (rename?)
@@ -130,6 +130,12 @@ lengthRight ( a, _, c ) =
 position : Zipper a b c -> Int
 position ( a, _, c ) =
     List.length a
+
+
+{-| -}
+positionFromEnd : Zipper a b c -> Int
+positionFromEnd ( a, _, c ) =
+    List.length c
 
 
 {-| -}
@@ -295,8 +301,8 @@ tryMoveRight fBA fCB zipper =
 
 {-| Set selection to first element
 -}
-selectFirst : (a -> b) -> (b -> c) -> Zipper a b c -> Zipper a b c
-selectFirst fAB fBC ( before, selected, after ) =
+moveToFirst : (a -> b) -> (b -> c) -> Zipper a b c -> Zipper a b c
+moveToFirst fAB fBC ( before, selected, after ) =
     case before of
         head :: tail ->
             ( []
@@ -310,8 +316,8 @@ selectFirst fAB fBC ( before, selected, after ) =
 
 {-| Try to set selection to Nth element, returning Nothing on failure
 -}
-selectNth : (a -> b) -> (b -> c) -> (c -> b) -> (b -> a) -> Int -> Zipper a b c -> Maybe (Zipper a b c)
-selectNth fAB fBC fCB fBA n ( before, selected, after ) =
+moveToN : (a -> b) -> (b -> c) -> (c -> b) -> (b -> a) -> Int -> Zipper a b c -> Maybe (Zipper a b c)
+moveToN fAB fBC fCB fBA n ( before, selected, after ) =
     let
         allElems =
             toList fAB identity fCB ( before, selected, after )
@@ -330,8 +336,8 @@ selectNth fAB fBC fCB fBA n ( before, selected, after ) =
 
 {-| Set selection to last element
 -}
-selectLast : (b -> a) -> (c -> b) -> Zipper a b c -> Zipper a b c
-selectLast fBA fCB ( before, selected, after ) =
+moveToLast : (b -> a) -> (c -> b) -> Zipper a b c -> Zipper a b c
+moveToLast fBA fCB ( before, selected, after ) =
     case List.Extra.unconsLast after of
         Just ( last, rest ) ->
             ( List.map (fCB >> fBA) rest ++ [ fBA selected ] ++ before

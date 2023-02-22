@@ -2,7 +2,7 @@ module Zipper.ListList exposing
     ( Zipper, RelativeIndex(..)
     , empty, fromTuple, fromZipperListElemList, fromZipperListListList
     , toTuple, toList, toZipperListElemList, toZipperListListList
-    , length, lengthLeft, lengthRight, position
+    , length, lengthLeft, lengthRight, position, positionFromEnd
     , getLeft, getRight, getAt, getAtRelative
     , setLeft, setRight, setAt, setAtRelative
     , map, mapSeparately, mapLeft, mapRight, IndexMethod(..), Position(..), indexedMap, indexedMapLeft, indexedMapRight
@@ -12,7 +12,7 @@ module Zipper.ListList exposing
     , insertFirst, insertLast, insertLeftOfSplit, insertRightOfSplit
     , sortKeepIndex, sortByKeepIndex, sortWithKeepIndex
     , reverse, reverseLeft, reverseRight
-    , swapTwo
+    , swap
     , Dists, indexAbsoluteCheck, indexRelativeCheck, indexAbsoluteToRelative, indexAbsoluteToRelativeCheck, indexRelativeToAbsolute, indexRelativeToAbsoluteCheck, absoluteIndexToPosDists, relativeIndexToPosDists, indexRanges
     )
 
@@ -41,7 +41,7 @@ If you're working with Chars, check out [`Zipper.StringString`](Zipper.StringStr
 
 # Length
 
-@docs length, lengthLeft, lengthRight, position
+@docs length, lengthLeft, lengthRight, position, positionFromEnd
 
 
 # Get
@@ -91,7 +91,7 @@ If you're working with Chars, check out [`Zipper.StringString`](Zipper.StringStr
 
 # Swap
 
-@docs swapTwo
+@docs swap
 
 
 # Indexes
@@ -101,7 +101,7 @@ If you're working with Chars, check out [`Zipper.StringString`](Zipper.StringStr
 -}
 
 import List.Extra
-import Zipper.ListList.Advanced
+import Zipper.ListList.Advanced as Adv
 
 
 {-| A list type that tracks a split location
@@ -276,6 +276,18 @@ lengthRight ( _, right ) =
 position : Zipper a -> Int
 position ( left, _ ) =
     List.length left
+
+
+{-|
+
+    fromTuple ( [ 1, 2, 3 ], [ 4, 5 ] )
+        |> positionFromEnd
+        --> 2
+
+-}
+positionFromEnd : Zipper a -> Int
+positionFromEnd ( _, right ) =
+    List.length right
 
 
 {-|
@@ -725,6 +737,12 @@ tryMoveLeft zipper =
 
 
 {-| -}
+moveLeftUntil : (List a -> List a -> Bool) -> Zipper a -> Maybe (Zipper a)
+moveLeftUntil f zipper =
+    Adv.moveLeftUntil identity f zipper
+
+
+{-| -}
 moveRight : Zipper a -> Maybe (Zipper a)
 moveRight ( left, right ) =
     case right of
@@ -752,8 +770,8 @@ insertFirst elem ( left, right ) =
 {-| Set selection to first element
 -}
 moveToFirst : Zipper a -> Zipper a
-moveToFirst ( left, right ) =
-    ( [], List.reverse left ++ right )
+moveToFirst zipper =
+    fromTuple ( toList zipper, [] )
 
 
 {-| Set selection to Nth element
@@ -777,8 +795,8 @@ moveToN n zipper =
 {-| Set selection to last element
 -}
 moveToLast : Zipper a -> Zipper a
-moveToLast ( left, right ) =
-    ( List.reverse right ++ left, [] )
+moveToLast zipper =
+    fromTuple ( [], toList zipper )
 
 
 {-| -}
@@ -848,8 +866,8 @@ reverseRight ( left, right ) =
 
 
 {-| -}
-swapTwo : Int -> Int -> Zipper a -> Maybe (Zipper a)
-swapTwo i j zipper =
+swap : Int -> Int -> Zipper a -> Maybe (Zipper a)
+swap i j zipper =
     case ( getAt i zipper, getAt j zipper ) of
         ( Just iElem, Just jElem ) ->
             zipper
@@ -1041,6 +1059,7 @@ indexRelativeToAbsoluteCheck zipper i =
            )
 
 
+{-| -}
 relativeIndexToPosDists : Zipper a -> RelativeIndex -> Maybe ( Position, Dists )
 relativeIndexToPosDists zipper i =
     absoluteIndexToPosDists
