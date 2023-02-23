@@ -3,7 +3,7 @@ module Zipper.ListListList.Advanced exposing
     , empty
     , fromZipperListList, toZipperListList, fromZipperListElemList, toZipperListElemList
     , getLeft
-    , moveLeftToLeft, moveLeftToLeftUntil
+    , moveLeftToLeft, moveLeftToLeftUntil, moveLeftToRight, moveLeftToRightUntil, moveRightToLeft, moveRightToLeftUntil, moveRightToRight, moveRightToRightUntil
     )
 
 {-| A zipper with a list of selected elements.
@@ -36,7 +36,7 @@ module Zipper.ListListList.Advanced exposing
 
 # Move
 
-@docs moveLeftToLeft, moveLeftToLeftUntil
+@docs moveLeftToLeft, moveLeftToLeftUntil, moveLeftToRight, moveLeftToRightUntil, moveRightToLeft, moveRightToLeftUntil, moveRightToRight, moveRightToRightUntil
 
 -}
 
@@ -60,10 +60,42 @@ empty =
     ( [], [], [] )
 
 
-{-| Attempt to move left edge of selection to left
--}
+{-| -}
 moveLeftToLeft : (a -> b) -> Zipper a b c -> Maybe (Zipper a b c)
 moveLeftToLeft fAB zipper =
+    case zipper of
+        ( head :: tail, selected, right ) ->
+            Just ( tail, fAB head :: selected, right )
+
+        ( [], selected, right ) ->
+            Nothing
+
+
+{-| -}
+moveLeftToRight : (a -> b) -> Zipper a b c -> Maybe (Zipper a b c)
+moveLeftToRight fAB zipper =
+    case zipper of
+        ( head :: tail, selected, right ) ->
+            Just ( tail, fAB head :: selected, right )
+
+        ( [], selected, right ) ->
+            Nothing
+
+
+{-| -}
+moveRightToLeft : (a -> b) -> Zipper a b c -> Maybe (Zipper a b c)
+moveRightToLeft fAB zipper =
+    case zipper of
+        ( head :: tail, selected, right ) ->
+            Just ( tail, fAB head :: selected, right )
+
+        ( [], selected, right ) ->
+            Nothing
+
+
+{-| -}
+moveRightToRight : (a -> b) -> Zipper a b c -> Maybe (Zipper a b c)
+moveRightToRight fAB zipper =
     case zipper of
         ( head :: tail, selected, right ) ->
             Just ( tail, fAB head :: selected, right )
@@ -85,6 +117,51 @@ moveLeftToLeftUntil fAB f zipper =
 
             else
                 moveLeftToLeftUntil fAB f ( left, selected, right )
+
+
+{-| -}
+moveLeftToRightUntil : (a -> b) -> (List a -> List b -> List c -> Bool) -> Zipper a b c -> Maybe (Zipper a b c)
+moveLeftToRightUntil fAB f zipper =
+    case moveLeftToRight fAB zipper of
+        Nothing ->
+            Nothing
+
+        Just ( left, selected, right ) ->
+            if f left selected right then
+                Just ( left, selected, right )
+
+            else
+                moveLeftToRightUntil fAB f ( left, selected, right )
+
+
+{-| -}
+moveRightToLeftUntil : (a -> b) -> (List a -> List b -> List c -> Bool) -> Zipper a b c -> Maybe (Zipper a b c)
+moveRightToLeftUntil fAB f zipper =
+    case moveRightToLeft fAB zipper of
+        Nothing ->
+            Nothing
+
+        Just ( left, selected, right ) ->
+            if f left selected right then
+                Just ( left, selected, right )
+
+            else
+                moveRightToLeftUntil fAB f ( left, selected, right )
+
+
+{-| -}
+moveRightToRightUntil : (a -> b) -> (List a -> List b -> List c -> Bool) -> Zipper a b c -> Maybe (Zipper a b c)
+moveRightToRightUntil fAB f zipper =
+    case moveRightToRight fAB zipper of
+        Nothing ->
+            Nothing
+
+        Just ( left, selected, right ) ->
+            if f left selected right then
+                Just ( left, selected, right )
+
+            else
+                moveRightToRightUntil fAB f ( left, selected, right )
 
 
 {-| Set selection to last element

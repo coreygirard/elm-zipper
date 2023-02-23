@@ -4,15 +4,15 @@ module Zipper.ListList exposing
     , toTuple, toList, toZipperListElemList, toZipperListListList
     , length, lengthLeft, lengthRight, position, positionFromEnd
     , getLeft, getRight, getAt, getAtRelative
-    , setLeft, setRight, setAt, setAtRelative
+    , setLeft, setRight, setAt, trySetAt, setAtRelative, trySetAtRelative
     , map, mapSeparately, mapLeft, mapRight, IndexMethod(..), Position(..), indexedMap, indexedMapLeft, indexedMapRight
     , update, updateSeparately, updateLeft, updateRight, updateAt, tryUpdateAt, updateAtRelative, tryUpdateAtRelative
     , filter, filterSeparately, filterLeft, filterRight, indexedFilter, indexedFilterLeft, indexedFilterRight
-    , moveLeft, tryMoveLeft, moveRight, tryMoveRight, moveToFirst, moveToLast, moveToN
+    , moveLeft, tryMoveLeft, moveRight, tryMoveRight, moveLeftUntil, moveRightUntil, moveToFirst, moveToLast, moveToN, tryMoveToN
     , insertFirst, insertLast, insertLeftOfSplit, insertRightOfSplit
     , sortKeepIndex, sortByKeepIndex, sortWithKeepIndex
     , reverse, reverseLeft, reverseRight
-    , swap
+    , swap, trySwap
     , Dists, indexAbsoluteCheck, indexRelativeCheck, indexAbsoluteToRelative, indexAbsoluteToRelativeCheck, indexRelativeToAbsolute, indexRelativeToAbsoluteCheck, absoluteIndexToPosDists, relativeIndexToPosDists, indexRanges
     )
 
@@ -51,7 +51,7 @@ If you're working with Chars, check out [`Zipper.StringString`](Zipper.StringStr
 
 # Set
 
-@docs setLeft, setRight, setAt, setAtRelative
+@docs setLeft, setRight, setAt, trySetAt, setAtRelative, trySetAtRelative
 
 
 # Map
@@ -71,7 +71,7 @@ If you're working with Chars, check out [`Zipper.StringString`](Zipper.StringStr
 
 # Move
 
-@docs moveLeft, tryMoveLeft, moveRight, tryMoveRight, moveToFirst, moveToLast, moveToN
+@docs moveLeft, tryMoveLeft, moveRight, tryMoveRight, moveLeftUntil, moveRightUntil, moveToFirst, moveToLast, moveToN, tryMoveToN
 
 
 # Insert
@@ -91,7 +91,7 @@ If you're working with Chars, check out [`Zipper.StringString`](Zipper.StringStr
 
 # Swap
 
-@docs swap
+@docs swap, trySwap
 
 
 # Indexes
@@ -408,6 +408,18 @@ setAt i elem zipper =
 {-|
 
     fromTuple ( [ 1, 2, 3 ], [ 4, 5 ] )
+        |> setAt 2 0
+        --> Just (fromTuple ( [ 1, 2, 0 ], [ 4, 5 ] ))
+
+-}
+trySetAt : Int -> a -> Zipper a -> Zipper a
+trySetAt i elem zipper =
+    trySetAtRelative (indexAbsoluteToRelative zipper i) elem zipper
+
+
+{-|
+
+    fromTuple ( [ 1, 2, 3 ], [ 4, 5 ] )
         |> setAtRelative (LeftIndex 1) 0
         --> Just (fromTuple ( [ 1, 0, 3 ], [ 4, 5 ] ))
 
@@ -422,6 +434,19 @@ setAtRelative i elem ( left, right ) =
         RightIndex i_ ->
             List.Extra.getAt i_ right
                 |> Maybe.map (\_ -> ( left, List.Extra.setAt i_ elem right ))
+
+
+{-|
+
+    fromTuple ( [ 1, 2, 3 ], [ 4, 5 ] )
+        |> setAtRelative (LeftIndex 1) 0
+        --> Just (fromTuple ( [ 1, 0, 3 ], [ 4, 5 ] ))
+
+-}
+trySetAtRelative : RelativeIndex -> a -> Zipper a -> Zipper a
+trySetAtRelative i elem zipper =
+    setAtRelative i elem zipper
+        |> Maybe.withDefault zipper
 
 
 {-|
@@ -762,6 +787,12 @@ tryMoveRight zipper =
 
 
 {-| -}
+moveRightUntil : (List a -> List a -> Bool) -> Zipper a -> Maybe (Zipper a)
+moveRightUntil f zipper =
+    Adv.moveRightUntil identity f zipper
+
+
+{-| -}
 insertFirst : a -> Zipper a -> Zipper a
 insertFirst elem ( left, right ) =
     ( left ++ [ elem ], right )
@@ -790,6 +821,14 @@ moveToN n zipper =
 
     else
         Nothing
+
+
+{-| Set selection to Nth element
+-}
+tryMoveToN : Int -> Zipper a -> Zipper a
+tryMoveToN n zipper =
+    moveToN n zipper
+        |> Maybe.withDefault zipper
 
 
 {-| Set selection to last element
@@ -879,6 +918,12 @@ swap i j zipper =
 
         _ ->
             Nothing
+
+
+{-| -}
+trySwap : Int -> Int -> Zipper a -> Zipper a
+trySwap i j zipper =
+    swap i j zipper |> Maybe.withDefault zipper
 
 
 {-|

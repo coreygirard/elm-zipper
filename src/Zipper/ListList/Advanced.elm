@@ -6,7 +6,7 @@ module Zipper.ListList.Advanced exposing
     , setLeft, setRight
     , insertAtFirst, insertAtLast, insertToLeft, insertToRight
     , updateLeft, updateRight
-    , moveToRight, moveToLeft, moveLeftUntil, tryMoveToRight, tryMoveToLeft, moveToN
+    , moveToRight, moveToLeft, moveLeftUntil, tryMoveToRight, tryMoveToLeft, moveRightUntil, moveToN
     , map, mapLeft, mapRight
     )
 
@@ -55,7 +55,7 @@ module Zipper.ListList.Advanced exposing
 
 # Move
 
-@docs moveToRight, moveToLeft, moveLeftUntil, tryMoveToRight, tryMoveToLeft, moveToN
+@docs moveToRight, moveToLeft, moveLeftUntil, tryMoveToRight, tryMoveToLeft, moveRightUntil, moveToN
 
 
 # Map
@@ -153,14 +153,14 @@ moveLeftUntil fAB f zipper =
 
 {-| Attempt to move split to right
 -}
-moveToRight : (b -> a) -> Zipper a b -> Result (Zipper a b) (Zipper a b)
+moveToRight : (b -> a) -> Zipper a b -> Maybe (Zipper a b)
 moveToRight fBA zipper =
     case zipper of
         ( before, head :: tail ) ->
-            Ok ( fBA head :: before, tail )
+            Just ( fBA head :: before, tail )
 
         ( before, [] ) ->
-            Err zipper
+            Nothing
 
 
 {-| Attempt to move split to right, return unchanged zipper on failure
@@ -168,7 +168,22 @@ moveToRight fBA zipper =
 tryMoveToRight : (b -> a) -> Zipper a b -> Zipper a b
 tryMoveToRight fBA zipper =
     moveToRight fBA zipper
-        |> Result.Extra.merge
+        |> Maybe.withDefault zipper
+
+
+{-| -}
+moveRightUntil : (b -> a) -> (List a -> List b -> Bool) -> Zipper a b -> Maybe (Zipper a b)
+moveRightUntil fBA f zipper =
+    case moveToRight fBA zipper of
+        Nothing ->
+            Nothing
+
+        Just ( left, right ) ->
+            if f left right then
+                Just ( left, right )
+
+            else
+                moveRightUntil fBA f ( left, right )
 
 
 {-| -}

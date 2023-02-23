@@ -4,15 +4,15 @@ module Zipper.ListElemList exposing
     , toTuple, toList, toZipperListList, toZipperListListList
     , length, lengthLeft, lengthRight, position, positionFromEnd
     , getFirst, getLeft, getSelected, getRight, getLast, getAt, getAtClamp, getAtRelative, getAtRelativeClamp
-    , setFirst, setLeft, setSelected, setRight, setLast, setAt, setAtClamp, setAtRelative, setAtRelativeClamp
+    , setFirst, setLeft, setSelected, setRight, setLast, setAt, trySetAt, setAtClamp, setAtRelative, trySetAtRelative, setAtRelativeClamp
     , map, mapSeparately, mapLeft, mapRight, IndexMethod(..), Position(..), indexedMap, indexedMapLeft, indexedMapSelected, indexedMapRight
-    , update, updateSeparately, updateLeft, updateSelected, updateRight, updateAt, updateAtClamp, updateAtRelative, updateAtRelativeClamp
+    , update, updateSeparately, updateLeft, updateSelected, updateRight, updateAt, tryUpdateAt, updateAtClamp, updateAtRelative, tryUpdateAtRelative, updateAtRelativeClamp
     , filter, filterSeparately, filterLeft, filterRight, indexedFilter, indexedFilterLeft, indexedFilterRight
-    , moveLeft, tryMoveLeft, moveLeftUntil, moveRight, tryMoveRight, moveRightUntil, moveToFirst, moveToN, moveToLast
+    , moveLeft, tryMoveLeft, moveLeftUntil, moveRight, tryMoveRight, moveRightUntil, moveToFirst, moveToN, tryMoveToN, moveToLast
     , insertFirst, insertLast, insertLeftOfSelected, insertRightOfSelected
     , sortKeepElem, sortByKeepElem, sortWithKeepElem, sortKeepIndex, sortByKeepIndex, sortWithKeepIndex
     , reverse, reverseLeft, reverseRight
-    , swapSelectedWithFirst, swapSelectedWithLast, swapSelectedWithN, swap
+    , swapSelectedWithFirst, swapSelectedWithLast, swapSelectedWithN, trySwapSelectedWithN, swap
     , Dists, indexAbsoluteCheck, indexRelativeCheck, indexAbsoluteToRelative, indexAbsoluteToRelativeCheck, indexRelativeToAbsolute, indexRelativeToAbsoluteCheck, absoluteIndexToPosDists, relativeIndexToPosDists
     )
 
@@ -51,7 +51,7 @@ If you're working with Chars, check out [`Zipper.StringCharString`](Zipper.Strin
 
 # Set
 
-@docs setFirst, setLeft, setSelected, setRight, setLast, setAt, setAtClamp, setAtRelative, setAtRelativeClamp
+@docs setFirst, setLeft, setSelected, setRight, setLast, setAt, trySetAt, setAtClamp, setAtRelative, trySetAtRelative, setAtRelativeClamp
 
 
 # Map
@@ -61,7 +61,7 @@ If you're working with Chars, check out [`Zipper.StringCharString`](Zipper.Strin
 
 # Update
 
-@docs update, updateSeparately, updateLeft, updateSelected, updateRight, updateAt, updateAtClamp, updateAtRelative, updateAtRelativeClamp
+@docs update, updateSeparately, updateLeft, updateSelected, updateRight, updateAt, tryUpdateAt, updateAtClamp, updateAtRelative, tryUpdateAtRelative, updateAtRelativeClamp
 
 
 # Filter
@@ -71,7 +71,7 @@ If you're working with Chars, check out [`Zipper.StringCharString`](Zipper.Strin
 
 # Move
 
-@docs moveLeft, tryMoveLeft, moveLeftUntil, moveRight, tryMoveRight, moveRightUntil, moveToFirst, moveToN, moveToLast
+@docs moveLeft, tryMoveLeft, moveLeftUntil, moveRight, tryMoveRight, moveRightUntil, moveToFirst, moveToN, tryMoveToN, moveToLast
 
 
 # Insert
@@ -91,7 +91,7 @@ If you're working with Chars, check out [`Zipper.StringCharString`](Zipper.Strin
 
 # Swap
 
-@docs swapSelectedWithFirst, swapSelectedWithLast, swapSelectedWithN, swap
+@docs swapSelectedWithFirst, swapSelectedWithLast, swapSelectedWithN, trySwapSelectedWithN, swap
 
 
 # Indexes
@@ -443,6 +443,13 @@ setAt i elem (( left, selected, right ) as zipper) =
 
 
 {-| -}
+trySetAt : Int -> a -> Zipper a -> Zipper a
+trySetAt i elem zipper =
+    setAt i elem zipper
+        |> Maybe.withDefault zipper
+
+
+{-| -}
 setAtClamp : Int -> a -> Zipper a -> Zipper a
 setAtClamp i elem ( left, selected, right ) =
     ( left, selected, right )
@@ -452,6 +459,13 @@ setAtClamp i elem ( left, selected, right ) =
 setAtRelative : Int -> a -> Zipper a -> Maybe (Zipper a)
 setAtRelative i elem ( left, selected, right ) =
     Nothing
+
+
+{-| -}
+trySetAtRelative : Int -> a -> Zipper a -> Zipper a
+trySetAtRelative i elem zipper =
+    setAtRelative i elem zipper
+        |> Maybe.withDefault zipper
 
 
 {-| -}
@@ -538,6 +552,13 @@ updateAt i f (( left, selected, right ) as zipper) =
 
 
 {-| -}
+tryUpdateAt : Int -> (a -> a) -> Zipper a -> Zipper a
+tryUpdateAt i f zipper =
+    updateAt i f zipper
+        |> Maybe.withDefault zipper
+
+
+{-| -}
 updateAtClamp : Int -> (a -> a) -> Zipper a -> Zipper a
 updateAtClamp i f ( left, selected, right ) =
     ( left, selected, right )
@@ -547,6 +568,13 @@ updateAtClamp i f ( left, selected, right ) =
 updateAtRelative : Int -> (a -> a) -> Zipper a -> Maybe (Zipper a)
 updateAtRelative i f ( left, selected, right ) =
     Nothing
+
+
+{-| -}
+tryUpdateAtRelative : Int -> (a -> a) -> Zipper a -> Zipper a
+tryUpdateAtRelative i f zipper =
+    updateAtRelative i f zipper
+        |> Maybe.withDefault zipper
 
 
 {-| -}
@@ -580,6 +608,14 @@ moveToN n ( before, selected, after ) =
 
         Nothing ->
             Nothing
+
+
+{-| Set selection to Nth element
+-}
+tryMoveToN : Int -> Zipper a -> Zipper a
+tryMoveToN n zipper =
+    moveToN n zipper
+        |> Maybe.withDefault zipper
 
 
 {-| Set selection to last element
@@ -1120,6 +1156,13 @@ swapSelectedWithN i ( left, selected, right ) =
 
         ( GT, _, Nothing ) ->
             Nothing
+
+
+{-| -}
+trySwapSelectedWithN : Int -> Zipper a -> Zipper a
+trySwapSelectedWithN i zipper =
+    swapSelectedWithN i zipper
+        |> Maybe.withDefault zipper
 
 
 {-| -}
