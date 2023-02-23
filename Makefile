@@ -1,16 +1,13 @@
 make:
 	elm make
-	make gen-table
 
 test:
 	make
-	make gen-table
 	elm-verify-examples
 	elm-test
 
 coverage:
 	make
-	make gen-table
 	elm-verify-examples
 	elm-coverage
 

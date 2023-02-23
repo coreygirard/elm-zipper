@@ -70,21 +70,21 @@ suite =
                         |> Zipper.ListElemList.Advanced.moveLeftNNonnegative identity identity 4
                         |> Expect.equal Nothing
             ]
-        , describe "Zipper.ListElemList.Advanced.selectNth"
+        , describe "Zipper.ListElemList.Advanced.moveToN"
             [ test "handles basic operation" <|
                 \_ ->
                     ( [ 3, 2, 1 ], 4, [ 5, 6, 7 ] )
-                        |> Zipper.ListElemList.Advanced.selectNth identity identity identity identity 5
+                        |> Zipper.ListElemList.Advanced.moveToN identity identity identity identity 5
                         |> Expect.equal (Just ( [ 5, 4, 3, 2, 1 ], 6, [ 7 ] ))
             , test "handles out-of-bounds (high)" <|
                 \_ ->
                     ( [ 3, 2, 1 ], 4, [ 5, 6, 7 ] )
-                        |> Zipper.ListElemList.Advanced.selectNth identity identity identity identity 10
+                        |> Zipper.ListElemList.Advanced.moveToN identity identity identity identity 10
                         |> Expect.equal Nothing
             , test "handles negative number" <|
                 \_ ->
                     ( [ 3, 2, 1 ], 4, [ 5, 6, 7 ] )
-                        |> Zipper.ListElemList.Advanced.selectNth identity identity identity identity -1
+                        |> Zipper.ListElemList.Advanced.moveToN identity identity identity identity -1
                         |> Expect.equal Nothing
             ]
         , describe "Zipper.ListElemList.Advanced.getAt"

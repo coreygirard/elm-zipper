@@ -9,11 +9,11 @@ import Zipper.ListList.Advanced exposing (..)
 suite : Test
 suite =
     describe "Zipper.ListList.Advanced"
-        [ describe "Zipper.ListList.Advanced.selectNth"
+        [ describe "Zipper.ListList.Advanced.moveToN"
             [ test "handles basic operation" <|
                 \_ ->
                     ( [ 3, 2, 1 ], [ 4, 5, 6 ] )
-                        |> Zipper.ListList.Advanced.selectNth identity identity 1
+                        |> Zipper.ListList.Advanced.moveToN identity identity 1
                         |> Expect.equal (Just ( [ 1 ], [ 2, 3, 4, 5, 6 ] ))
             , test "doesn't convert elements unnecessarily, moving left" <|
                 \_ ->
@@ -26,7 +26,7 @@ suite =
                       , { n = 6, changed = False, typeB = () }
                       ]
                     )
-                        |> Zipper.ListList.Advanced.selectNth
+                        |> Zipper.ListList.Advanced.moveToN
                             (\{ n } -> { n = n, changed = True, typeB = () })
                             (\{ n } -> { n = n, changed = True, typeA = () })
                             1
@@ -52,7 +52,7 @@ suite =
                       , { n = 6, changed = False, typeB = () }
                       ]
                     )
-                        |> Zipper.ListList.Advanced.selectNth
+                        |> Zipper.ListList.Advanced.moveToN
                             (\{ n } -> { n = n, changed = True, typeB = () })
                             (\{ n } -> { n = n, changed = True, typeA = () })
                             5
@@ -79,7 +79,7 @@ suite =
                       , { n = 6, changed = False, typeB = () }
                       ]
                     )
-                        |> Zipper.ListList.Advanced.selectNth
+                        |> Zipper.ListList.Advanced.moveToN
                             (\{ n } -> { n = n, changed = True, typeB = () })
                             (\{ n } -> { n = n, changed = True, typeA = () })
                             3

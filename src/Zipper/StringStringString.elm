@@ -55,11 +55,11 @@ empty =
 
     ( [ '2', '1' ], [ '3', '4' ], [ '5', '6' ] )
         |> moveLeftToLeft
-        --> Ok ( [ '1' ], [ '2', '3', '4' ], [ '5', '6' ] )
+        --> Just ( [ '1' ], [ '2', '3', '4' ], [ '5', '6' ] )
 
     ( [], [ '3', '4' ], [ '5', '6' ] )
         |> moveLeftToLeft
-        --> Err ( [], [ '3', '4' ], [ '5', '6' ] )
+        --> Nothing
 
 -}
 moveLeftToLeft : Zipper -> Maybe Zipper

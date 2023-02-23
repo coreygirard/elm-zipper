@@ -9,49 +9,7 @@ import Zipper.ListListList exposing (..)
 suite : Test
 suite =
     describe "Zipper.ListListList"
-        [ describe "Zipper.ListListList.updateAt"
-            [ test "handles out of bounds left" <|
-                \_ ->
-                    fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
-                        |> Zipper.ListListList.updateAt -1 ((+) 10)
-                        |> Expect.equal Nothing
-            , test "handles left edge of left section" <|
-                \_ ->
-                    fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
-                        |> Zipper.ListListList.updateAt 0 ((+) 10)
-                        |> Expect.equal (Just (fromTuple ( [ 11, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )))
-            , test "handles right edge of left section" <|
-                \_ ->
-                    fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
-                        |> Zipper.ListListList.updateAt 2 ((+) 10)
-                        |> Expect.equal (Just (fromTuple ( [ 1, 2, 13 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )))
-            , test "handles left edge of selected section" <|
-                \_ ->
-                    fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
-                        |> Zipper.ListListList.updateAt 3 ((+) 10)
-                        |> Expect.equal (Just (fromTuple ( [ 1, 2, 3 ], [ 14, 5, 6 ], [ 7, 8, 9 ] )))
-            , test "handles right edge of selected section" <|
-                \_ ->
-                    fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
-                        |> Zipper.ListListList.updateAt 5 ((+) 10)
-                        |> Expect.equal (Just (fromTuple ( [ 1, 2, 3 ], [ 4, 5, 16 ], [ 7, 8, 9 ] )))
-            , test "handles left edge of right section" <|
-                \_ ->
-                    fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
-                        |> Zipper.ListListList.updateAt 6 ((+) 10)
-                        |> Expect.equal (Just (fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 17, 8, 9 ] )))
-            , test "handles right edge of right section" <|
-                \_ ->
-                    fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
-                        |> Zipper.ListListList.updateAt 8 ((+) 10)
-                        |> Expect.equal (Just (fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 19 ] )))
-            , test "handles out of bounds right" <|
-                \_ ->
-                    fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
-                        |> Zipper.ListListList.updateAt 9 ((+) 10)
-                        |> Expect.equal Nothing
-            ]
-        , describe "Zipper.ListListList.absoluteIndexToPosDists"
+        [ describe "Zipper.ListListList.absoluteIndexToPosDists"
             [ test "handles basic operation" <|
                 \_ ->
                     let
@@ -100,5 +58,47 @@ suite =
                                     }
                                 }
                 ]
+            ]
+        , describe "Zipper.ListListList.updateAt"
+            [ test "handles out of bounds left" <|
+                \_ ->
+                    fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                        |> Zipper.ListListList.updateAt -1 ((+) 10)
+                        |> Expect.equal Nothing
+            , test "handles left edge of left section" <|
+                \_ ->
+                    fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                        |> Zipper.ListListList.updateAt 0 ((+) 10)
+                        |> Expect.equal (Just (fromTuple ( [ 11, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )))
+            , test "handles right edge of left section" <|
+                \_ ->
+                    fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                        |> Zipper.ListListList.updateAt 2 ((+) 10)
+                        |> Expect.equal (Just (fromTuple ( [ 1, 2, 13 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )))
+            , test "handles left edge of selected section" <|
+                \_ ->
+                    fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                        |> Zipper.ListListList.updateAt 3 ((+) 10)
+                        |> Expect.equal (Just (fromTuple ( [ 1, 2, 3 ], [ 14, 5, 6 ], [ 7, 8, 9 ] )))
+            , test "handles right edge of selected section" <|
+                \_ ->
+                    fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                        |> Zipper.ListListList.updateAt 5 ((+) 10)
+                        |> Expect.equal (Just (fromTuple ( [ 1, 2, 3 ], [ 4, 5, 16 ], [ 7, 8, 9 ] )))
+            , test "handles left edge of right section" <|
+                \_ ->
+                    fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                        |> Zipper.ListListList.updateAt 6 ((+) 10)
+                        |> Expect.equal (Just (fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 17, 8, 9 ] )))
+            , test "handles right edge of right section" <|
+                \_ ->
+                    fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                        |> Zipper.ListListList.updateAt 8 ((+) 10)
+                        |> Expect.equal (Just (fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 19 ] )))
+            , test "handles out of bounds right" <|
+                \_ ->
+                    fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                        |> Zipper.ListListList.updateAt 9 ((+) 10)
+                        |> Expect.equal Nothing
             ]
         ]

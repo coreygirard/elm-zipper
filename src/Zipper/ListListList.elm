@@ -288,7 +288,11 @@ getAt i (( left, selected, right ) as zipper) =
 
     zipper |> getAtRelativeLeft (RightIndex 2) --> Just 6
 
-    zipper |> getAtRelativeLeft (RightIndex 3) --> Nothing
+    zipper |> getAtRelativeLeft (RightIndex 3) --> Just 7
+
+    zipper |> getAtRelativeLeft (RightIndex 5) --> Just 9
+
+    zipper |> getAtRelativeLeft (RightIndex 6) --> Nothing
 
 -}
 getAtRelativeLeft : RelativeIndex -> Zipper a -> Maybe a
@@ -301,15 +305,19 @@ getAtRelativeLeft i zipper =
     zipper : Zipper Int
     zipper = fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
 
-    zipper |> getAtRelativeRight (LeftIndex 3) --> Nothing
+    zipper |> getAtRelativeRight (LeftIndex 6) --> Nothing
 
-    zipper |> getAtRelativeRight (LeftIndex 2) --> Just 1
+    zipper |> getAtRelativeRight (LeftIndex 5) --> Just 1
 
-    zipper |> getAtRelativeRight (LeftIndex 0) --> Just 3
+    zipper |> getAtRelativeRight (LeftIndex 3) --> Just 3
 
-    zipper |> getAtRelativeRight (RightIndex 0) --> Just 4
+    zipper |> getAtRelativeRight (LeftIndex 2) --> Just 4
 
-    zipper |> getAtRelativeRight (RightIndex 2) --> Just 6
+    zipper |> getAtRelativeRight (LeftIndex 0) --> Just 6
+
+    zipper |> getAtRelativeRight (RightIndex 0) --> Just 7
+
+    zipper |> getAtRelativeRight (RightIndex 2) --> Just 9
 
     zipper |> getAtRelativeRight (RightIndex 3) --> Nothing
 
@@ -961,11 +969,11 @@ moveLeftToFirst zipper =
 
     fromTuple ( [ 1, 2 ], [ 3, 4 ], [ 5, 6 ] )
         |> moveLeftToLeft
-        --> Ok (fromTuple ( [ 1 ], [ 2, 3, 4 ], [ 5, 6 ] ))
+        --> Just (fromTuple ( [ 1 ], [ 2, 3, 4 ], [ 5, 6 ] ))
 
     fromTuple ( [], [ 3, 4 ], [ 5, 6 ] )
         |> moveLeftToLeft
-        --> Err (fromTuple ( [], [ 3, 4 ], [ 5, 6 ] ))
+        --> Nothing
 
 -}
 moveLeftToLeft : Zipper a -> Maybe (Zipper a)

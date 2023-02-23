@@ -319,100 +319,6 @@ getRight ( _, right ) =
     right
 
 
-indexRangeFromMethod :
-    IndexMethod
-    -> Zipper a
-    ->
-        { left : List Int
-        , right : List Int
-        }
-indexRangeFromMethod indexMethod zipper =
-    case indexMethod of
-        FromFirst ->
-            indexRanges zipper |> .fromFirst
-
-        FromLast ->
-            indexRanges zipper |> .fromLast
-
-        FromSplit ->
-            indexRanges zipper |> .fromSplit
-
-        FromEdges ->
-            indexRanges zipper |> .fromEdges
-
-
-{-| -}
-indexRanges :
-    Zipper a
-    ->
-        { fromFirst :
-            { left : List Int
-            , right : List Int
-            }
-        , fromLast :
-            { left : List Int
-            , right : List Int
-            }
-        , fromSplit :
-            { left : List Int
-            , right : List Int
-            }
-        , fromEdges :
-            { left : List Int
-            , right : List Int
-            }
-        }
-indexRanges (( left, right ) as zipper) =
-    { fromFirst =
-        { left =
-            List.range
-                0
-                (List.length left - 1)
-                |> List.reverse
-        , right =
-            List.range
-                (List.length left)
-                (length zipper - 1)
-        }
-    , fromLast =
-        { left =
-            List.range
-                (List.length right)
-                (length zipper - 1)
-        , right =
-            List.range
-                0
-                (List.length right - 1)
-                |> List.reverse
-        }
-    , fromSplit =
-        { left =
-            List.range
-                0
-                (List.length left - 1)
-                |> List.map ((+) 1)
-                |> List.map ((*) -1)
-        , right =
-            List.range
-                0
-                (List.length right - 1)
-                |> List.map ((+) 1)
-        }
-    , fromEdges =
-        { left =
-            List.range
-                0
-                (List.length left - 1)
-                |> List.reverse
-        , right =
-            List.range
-                0
-                (List.length right - 1)
-                |> List.reverse
-        }
-    }
-
-
 {-|
 
     zipper : Zipper Int
@@ -605,6 +511,100 @@ indexedMapRight indexMethod f (( left, right ) as zipper) =
     ( left
     , List.map2 (\i elem -> f Right i elem) indexes.right right
     )
+
+
+indexRangeFromMethod :
+    IndexMethod
+    -> Zipper a
+    ->
+        { left : List Int
+        , right : List Int
+        }
+indexRangeFromMethod indexMethod zipper =
+    case indexMethod of
+        FromFirst ->
+            indexRanges zipper |> .fromFirst
+
+        FromLast ->
+            indexRanges zipper |> .fromLast
+
+        FromSplit ->
+            indexRanges zipper |> .fromSplit
+
+        FromEdges ->
+            indexRanges zipper |> .fromEdges
+
+
+{-| -}
+indexRanges :
+    Zipper a
+    ->
+        { fromFirst :
+            { left : List Int
+            , right : List Int
+            }
+        , fromLast :
+            { left : List Int
+            , right : List Int
+            }
+        , fromSplit :
+            { left : List Int
+            , right : List Int
+            }
+        , fromEdges :
+            { left : List Int
+            , right : List Int
+            }
+        }
+indexRanges (( left, right ) as zipper) =
+    { fromFirst =
+        { left =
+            List.range
+                0
+                (List.length left - 1)
+                |> List.reverse
+        , right =
+            List.range
+                (List.length left)
+                (length zipper - 1)
+        }
+    , fromLast =
+        { left =
+            List.range
+                (List.length right)
+                (length zipper - 1)
+        , right =
+            List.range
+                0
+                (List.length right - 1)
+                |> List.reverse
+        }
+    , fromSplit =
+        { left =
+            List.range
+                0
+                (List.length left - 1)
+                |> List.map ((+) 1)
+                |> List.map ((*) -1)
+        , right =
+            List.range
+                0
+                (List.length right - 1)
+                |> List.map ((+) 1)
+        }
+    , fromEdges =
+        { left =
+            List.range
+                0
+                (List.length left - 1)
+                |> List.reverse
+        , right =
+            List.range
+                0
+                (List.length right - 1)
+                |> List.reverse
+        }
+    }
 
 
 {-|
