@@ -13,7 +13,6 @@ module Zipper.ListElemList exposing
     , sortKeepElem, sortKeepIndex
     , reverse
     , indexAbsoluteCheck, indexRelativeCheck, indexAbsoluteToRelative, indexAbsoluteToRelativeCheck, indexRelativeToAbsolute, indexRelativeToAbsoluteCheck, absoluteIndexToPosDists, relativeIndexToPosDists, indexRangesFromFirst, indexRangesFromLast, indexRangesFromSelection, indexRangesFromEdges
-    , indexedFilterLeft, indexedFilterRight, indexedMapLeft, indexedMapRight, indexedMapSelected, mapLeft, mapRight, mapSeparately, moveLeftUntil, moveRightUntil, moveToIndex, moveToIndexRelative, positionFromEnd, reverseLeft, reverseRight, setAt, setAtClamp, setAtRelative, setAtRelativeClamp, sortByKeepElem, sortByKeepIndex, sortWithKeepElem, sortWithKeepIndex, swap, swapSelectedWithFirst, swapSelectedWithIndex, swapSelectedWithLast, tryMoveToIndex, tryMoveToIndexRelative, trySetAt, trySetAtRelative, trySwapSelectedWithIndex, tryUpdateAt, tryUpdateAtRelative, updateAt, updateAtClamp, updateAtRelative, updateAtRelativeClamp, updateSeparately
     )
 
 {-| A special case of [`Zipper.ListElemList.Advanced`](Zipper.ListElemList.Advanced) where all elements have the same type.
@@ -94,7 +93,7 @@ If you're working with Chars, check out [`Zipper.StringCharString`](Zipper.Strin
 
 # Indexes
 
-@docs Dists, indexAbsoluteCheck, indexRelativeCheck, indexAbsoluteToRelative, indexAbsoluteToRelativeCheck, indexRelativeToAbsolute, indexRelativeToAbsoluteCheck, absoluteIndexToPosDists, relativeIndexToPosDists, indexRangesFromFirst, indexRangesFromLast, indexRangesFromSelection, indexRangesFromEdges
+@docs indexAbsoluteCheck, indexRelativeCheck, indexAbsoluteToRelative, indexAbsoluteToRelativeCheck, indexRelativeToAbsolute, indexRelativeToAbsoluteCheck, absoluteIndexToPosDists, relativeIndexToPosDists, indexRangesFromFirst, indexRangesFromLast, indexRangesFromSelection, indexRangesFromEdges
 
 -}
 
@@ -740,18 +739,6 @@ mapRight =
     Adv.mapRight
 
 
-{-| Map a function over all elements
-
-    ( [ 2, 1 ], 3, [ 4, 5 ] )
-        |> mapSeparately ((+) 10) ((+) 20) ((+) 30)
-        --> ( [ 12, 11 ], 23, [ 34, 35 ] )
-
--}
-mapSeparately : (a -> b) -> (a -> b) -> (a -> b) -> Zipper a -> Zipper b
-mapSeparately fA fB fC zipper =
-    Adv.map fA fB fC zipper
-
-
 {-| Attempt to move selection to left
 
     ( [ 2, 1 ], 3, [ 4, 5 ] )
@@ -768,18 +755,6 @@ moveLeft zipper =
     Adv.moveLeft identity identity zipper
 
 
-{-|
-
-    fromTuple ( [ 1, 2, 3 ], 4, [ 5, 6, 7 ] )
-        |> moveLeftUntil (\left _ _ -> List.length left <= 1)
-        --> Just (fromTuple ( [ 1 ], 2, [ 3, 4, 5, 6, 7 ] ))
-
--}
-moveLeftUntil : (List a -> a -> List a -> Bool) -> Zipper a -> Maybe (Zipper a)
-moveLeftUntil f zipper =
-    Adv.moveLeftUntil identity identity f zipper
-
-
 {-| Attempt to move selection to right
 
     ( [ 2, 1 ], 3, [ 4, 5 ] )
@@ -794,18 +769,6 @@ moveLeftUntil f zipper =
 moveRight : Zipper a -> Maybe (Zipper a)
 moveRight zipper =
     Adv.moveRight identity identity zipper
-
-
-{-|
-
-    fromTuple ( [ 1, 2, 3 ], 4, [ 5, 6, 7 ] )
-        |> moveRightUntil (\left _ _ -> List.length left >= 5)
-        --> Just (fromTuple ( [ 1, 2, 3, 4, 5 ], 6, [ 7 ] ))
-
--}
-moveRightUntil : (List a -> a -> List a -> Bool) -> Zipper a -> Maybe (Zipper a)
-moveRightUntil f zipper =
-    Adv.moveRightUntil identity identity f zipper
 
 
 {-| Set selection to first element

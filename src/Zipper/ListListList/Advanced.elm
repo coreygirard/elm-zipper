@@ -3,7 +3,7 @@ module Zipper.ListListList.Advanced exposing
     , empty
     , fromZipperListList, toZipperListList, fromZipperListElemList, toZipperListElemList
     , getLeft
-    , moveLeftToLeft, moveLeftToLeftUntil, moveLeftToRight, moveLeftToRightUntil, moveRightToLeft, moveRightToLeftUntil, moveRightToRight, moveRightToRightUntil
+    , moveLeftToLeft, moveLeftToLeftUntil, moveLeftToRight, moveLeftToRightUntil, moveRightToLeft, moveRightToLeftUntil, moveRightToRight, moveRightToRightUntil, moveToIndex
     )
 
 {-| A zipper with a list of selected elements.
@@ -36,7 +36,7 @@ module Zipper.ListListList.Advanced exposing
 
 # Move
 
-@docs moveLeftToLeft, moveLeftToLeftUntil, moveLeftToRight, moveLeftToRightUntil, moveRightToLeft, moveRightToLeftUntil, moveRightToRight, moveRightToRightUntil
+@docs moveLeftToLeft, moveLeftToLeftUntil, moveLeftToRight, moveLeftToRightUntil, moveRightToLeft, moveRightToLeftUntil, moveRightToRight, moveRightToRightUntil, moveToIndex
 
 -}
 
@@ -162,6 +162,12 @@ moveRightToRightUntil fAB f zipper =
 
             else
                 moveRightToRightUntil fAB f ( left, selected, right )
+
+
+{-| -}
+moveToIndex : (a -> b) -> (b -> a) -> (b -> c) -> (c -> b) -> Int -> Int -> Zipper a b c -> Maybe (Zipper a b c)
+moveToIndex fAB fBA fBC fCB i j ( left, selected, right ) =
+    Nothing
 
 
 {-| Set selection to last element

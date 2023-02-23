@@ -75,7 +75,7 @@ If you're working with Chars, check out [`Zipper.StringCharString`](Zipper.Strin
 
 # Indexes
 
-@docs Dists, indexAbsoluteCheck, indexRelativeCheck, indexAbsoluteToRelative, indexAbsoluteToRelativeCheck, indexRelativeToAbsolute, indexRelativeToAbsoluteCheck, absoluteIndexToPosDists, relativeIndexToPosDists, indexRangesFromFirst, indexRangesFromLast, indexRangesFromSelection, indexRangesFromEdges
+@docs indexAbsoluteCheck, indexRelativeCheck, indexAbsoluteToRelative, indexAbsoluteToRelativeCheck, indexRelativeToAbsolute, indexRelativeToAbsoluteCheck, absoluteIndexToPosDists, relativeIndexToPosDists, indexRangesFromFirst, indexRangesFromLast, indexRangesFromSelection, indexRangesFromEdges
 
 -}
 
