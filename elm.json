@@ -7,12 +7,13 @@
   "exposed-modules": [
     "Zipper.ListList",
     "Zipper.ListList.Advanced",
-    "Zipper.StringString",
     "Zipper.ListElemList",
     "Zipper.ListElemList.Advanced",
-    "Zipper.StringCharString",
+    "Zipper.ListElemList.Extra",
     "Zipper.ListListList",
     "Zipper.ListListList.Advanced",
+    "Zipper.StringCharString",
+    "Zipper.StringString",
     "Zipper.StringStringString",
     "Zipper.StringStringString.WithCursor"
   ],

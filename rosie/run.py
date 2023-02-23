@@ -15,6 +15,7 @@ def get_filepaths():
         "src/Zipper/ListList.elm",
         "src/Zipper/ListListList.elm",
         "src/Zipper/ListElemList.elm",
+        "src/Zipper/ListElemList/Extra.elm",
     ]
 
     return out

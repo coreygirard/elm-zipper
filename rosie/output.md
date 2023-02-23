@@ -9,12 +9,12 @@
 ### fromListAndIndex
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L251) | `Int -> List a -> Maybe (Zipper a)` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L218) | `Int -> List a -> Maybe (Zipper a)` |
 
 ### fromTuple
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L262) | `( List a, a, List a ) -> Zipper a` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L229) | `( List a, a, List a ) -> Zipper a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L214) | `( List a, List a ) -> Zipper a` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L242) | `( List a, List a, List a ) -> Zipper a` |
 
@@ -27,24 +27,29 @@
 ### fromZipperListList
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L274) | `a -> ( List a, List a ) -> Zipper a` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L241) | `a -> ( List a, List a ) -> Zipper a` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L254) | `List a -> ( List a, List a ) -> Zipper a` |
 
 ### fromZipperListListList
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L286) | `(List a -> a) -> ( List a, List a, List a ) -> Zipper a` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L253) | `(List a -> a) -> ( List a, List a, List a ) -> Zipper a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L238) | `( List a, List a, List a ) -> Zipper a` |
 
 ### singleton
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1112) | `a -> Zipper a` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L984) | `a -> Zipper a` |
 
 
 
 
 # Definition
+
+### Dists
+| filepath | signature |
+| :--- | :--- |
+| [Zipper/ListElemList.elm](/) | `[ERROR]` |
 
 ### RelativeIndex
 | filepath | signature |
@@ -67,21 +72,21 @@
 ### filter
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L207) | `(a -> Bool) -> Zipper a -> ( List a, Maybe a, List a )` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L205) | `(a -> Bool) -> Zipper a -> ( List a, Maybe a, List a )` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L179) | `(a -> Bool) -> Zipper a -> Zipper a` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L197) | `(a -> Bool) -> Zipper a -> Zipper a` |
 
 ### filterLeft
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L220) | `(a -> Bool) -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L138) | `(a -> Bool) -> Zipper a -> Zipper a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L185) | `(a -> Bool) -> Zipper a -> Zipper a` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L206) | `(a -> Bool) -> Zipper a -> Zipper a` |
 
 ### filterRight
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L229) | `(a -> Bool) -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L147) | `(a -> Bool) -> Zipper a -> Zipper a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L191) | `(a -> Bool) -> Zipper a -> Zipper a` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L215) | `(a -> Bool) -> Zipper a -> Zipper a` |
 
@@ -93,28 +98,28 @@
 ### filterSeparately
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L238) | `(a -> Bool) -> (a -> Bool) -> (a -> Bool) -> Zipper a -> ( List a, Maybe a, List a )` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L156) | `(a -> Bool) -> (a -> Bool) -> (a -> Bool) -> Zipper a -> ( List a, Maybe a, List a )` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L203) | `(a -> Bool) -> (a -> Bool) -> Zipper a -> Zipper a` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L233) | `(a -> Bool) -> (a -> Bool) -> (a -> Bool) -> Zipper a -> Zipper a` |
 
 ### indexedFilter
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L529) | `IndexMethod -> (Position -> Int -> a -> Bool) -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L401) | `IndexMethod -> (Position -> Int -> a -> Bool) -> Zipper a -> Zipper a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L414) | `IndexMethod -> (Position -> Int -> a -> Bool) -> Zipper a -> Zipper a` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L474) | `IndexMethod -> (Position -> Int -> a -> Bool) -> Zipper a -> Zipper a` |
 
 ### indexedFilterLeft
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L546) | `IndexMethod -> (Position -> Int -> a -> Bool) -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L289) | `IndexMethod -> (Position -> Int -> a -> Bool) -> Zipper a -> Zipper a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L430) | `IndexMethod -> (Position -> Int -> a -> Bool) -> Zipper a -> Zipper a` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L493) | `IndexMethod -> (Position -> Int -> a -> Bool) -> Zipper a -> Zipper a` |
 
 ### indexedFilterRight
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L561) | `IndexMethod -> (Position -> Int -> a -> Bool) -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L304) | `IndexMethod -> (Position -> Int -> a -> Bool) -> Zipper a -> Zipper a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L444) | `IndexMethod -> (Position -> Int -> a -> Bool) -> Zipper a -> Zipper a` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L508) | `IndexMethod -> (Position -> Int -> a -> Bool) -> Zipper a -> Zipper a` |
 
@@ -131,25 +136,25 @@
 ### getAt
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L292) | `Int -> Zipper a -> Maybe a` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L169) | `Int -> Zipper a -> Maybe a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L261) | `Int -> Zipper a -> Maybe a` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L260) | `Int -> Zipper a -> Maybe a` |
 
 ### getAtClamp
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L298) | `Int -> Zipper a -> a` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L175) | `Int -> Zipper a -> a` |
 
 ### getAtRelative
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L304) | `Int -> Zipper a -> Maybe a` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L181) | `Int -> Zipper a -> Maybe a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L284) | `RelativeIndex -> Zipper a -> Maybe a` |
 
 ### getAtRelativeClamp
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L321) | `Int -> Zipper a -> a` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L198) | `Int -> Zipper a -> a` |
 
 ### getAtRelativeLeft
 | filepath | signature |
@@ -164,31 +169,31 @@
 ### getFirst
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L340) | `Zipper a -> a` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L269) | `Zipper a -> a` |
 
 ### getLast
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L418) | `Zipper a -> a` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L290) | `Zipper a -> a` |
 
 ### getLeft
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L429) | `Zipper a -> List a` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L301) | `Zipper a -> List a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L305) | `Zipper a -> List a` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L331) | `Zipper a -> List a` |
 
 ### getRight
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L435) | `Zipper a -> List a` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L307) | `Zipper a -> List a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L317) | `Zipper a -> List a` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L337) | `Zipper a -> List a` |
 
 ### getSelected
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L441) | `Zipper a -> a` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L313) | `Zipper a -> a` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L343) | `Zipper a -> List a` |
 
 
@@ -200,33 +205,38 @@
 | filepath | signature |
 | :--- | :--- |
 | [Zipper/ListElemList.elm](/) | `[ERROR]` |
+| [Zipper/ListElemList/Extra.elm](/) | `[ERROR]` |
 | [Zipper/ListList.elm](/) | `[ERROR]` |
 | [Zipper/ListListList.elm](/) | `[ERROR]` |
 
 ### absoluteIndexToPosDists
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L176) | `Zipper a -> Int -> Maybe ( Position, Dists )` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L174) | `Zipper a -> Int -> Maybe ( Position, Dists )` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L107) | `Zipper a -> Int -> Maybe ( Position, Dists )` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L140) | `Zipper a -> Int -> Maybe ( Position, Dists )` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L156) | `Zipper a -> Int -> Maybe ( Position, Dists )` |
 
 ### indexAbsoluteCheck
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L466) | `Zipper a -> Int -> Maybe Position` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L338) | `Zipper a -> Int -> Maybe Position` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L226) | `Zipper a -> Int -> Maybe Position` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L340) | `Zipper a -> Int -> Maybe Position` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L370) | `Zipper a -> Int -> Maybe Position` |
 
 ### indexAbsoluteToRelative
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L491) | `Zipper a -> Int -> Int` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L363) | `Zipper a -> Int -> Int` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L251) | `Zipper a -> Int -> Int` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L370) | `Zipper a -> Int -> RelativeIndex` |
 
 ### indexAbsoluteToRelativeCheck
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L516) | `Zipper a -> Int -> Maybe Int` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L388) | `Zipper a -> Int -> Maybe Int` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L276) | `Zipper a -> Int -> Maybe Int` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L401) | `Zipper a -> Int -> Maybe RelativeIndex` |
 
 ### indexAbsoluteToRelativeLeft
@@ -258,27 +268,32 @@
 ### indexRangesFromEdges
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L644) | `Zipper a -> { left : List Int, selected : Int, right : List Int }` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L516) | `Zipper a -> { left : List Int, selected : Int, right : List Int }` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L374) | `Zipper a -> { left : List Int, selected : Int, right : List Int }` |
 
 ### indexRangesFromFirst
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L664) | `Zipper a -> { left : List Int, selected : Int, right : List Int }` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L536) | `Zipper a -> { left : List Int, selected : Int, right : List Int }` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L394) | `Zipper a -> { left : List Int, selected : Int, right : List Int }` |
 
 ### indexRangesFromLast
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L681) | `Zipper a -> { left : List Int, selected : Int, right : List Int }` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L553) | `Zipper a -> { left : List Int, selected : Int, right : List Int }` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L411) | `Zipper a -> { left : List Int, selected : Int, right : List Int }` |
 
 ### indexRangesFromSelection
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L698) | `Zipper a -> { left : List Int, selected : Int, right : List Int }` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L570) | `Zipper a -> { left : List Int, selected : Int, right : List Int }` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L428) | `Zipper a -> { left : List Int, selected : Int, right : List Int }` |
 
 ### indexRelativeCheck
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L733) | `Zipper a -> Int -> Maybe Position` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L605) | `Zipper a -> Int -> Maybe Position` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L463) | `Zipper a -> Int -> Maybe Position` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L628) | `Zipper a -> RelativeIndex -> Maybe Position` |
 
 ### indexRelativeLeftCheck
@@ -314,13 +329,15 @@
 ### indexRelativeToAbsolute
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L768) | `Zipper a -> Int -> Int` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L640) | `Zipper a -> Int -> Int` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L498) | `Zipper a -> Int -> Int` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L653) | `Zipper a -> RelativeIndex -> Int` |
 
 ### indexRelativeToAbsoluteCheck
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L793) | `Zipper a -> Int -> Maybe Int` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L665) | `Zipper a -> Int -> Maybe Int` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L523) | `Zipper a -> Int -> Maybe Int` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L685) | `Zipper a -> RelativeIndex -> Maybe Int` |
 
 ### relativeIndexLeftToPosDists
@@ -336,7 +353,8 @@
 ### relativeIndexToPosDists
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L993) | `Zipper a -> Int -> Maybe ( Position, Dists )` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L865) | `Zipper a -> Int -> Maybe ( Position, Dists )` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L617) | `Zipper a -> Int -> Maybe ( Position, Dists )` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L902) | `Zipper a -> RelativeIndex -> Maybe ( Position, Dists )` |
 
 
@@ -347,14 +365,14 @@
 ### insertFirst
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L806) | `a -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L678) | `a -> Zipper a -> Zipper a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L698) | `a -> Zipper a -> Zipper a` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L855) | `a -> Zipper a -> Zipper a` |
 
 ### insertLast
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L812) | `a -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L684) | `a -> Zipper a -> Zipper a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L704) | `a -> Zipper a -> Zipper a` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L861) | `a -> Zipper a -> Zipper a` |
 
@@ -371,7 +389,7 @@
 ### insertLeftOfSelected
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L818) | `a -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L690) | `a -> Zipper a -> Zipper a` |
 
 ### insertLeftOfSplit
 | filepath | signature |
@@ -391,7 +409,7 @@
 ### insertRightOfSelected
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L824) | `a -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L696) | `a -> Zipper a -> Zipper a` |
 
 ### insertRightOfSplit
 | filepath | signature |
@@ -406,21 +424,21 @@
 ### length
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L830) | `Zipper a -> Int` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L702) | `Zipper a -> Int` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L728) | `Zipper a -> Int` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L891) | `Zipper a -> Int` |
 
 ### lengthLeft
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L836) | `Zipper a -> Int` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L708) | `Zipper a -> Int` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L740) | `Zipper a -> Int` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L897) | `Zipper a -> Int` |
 
 ### lengthRight
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L842) | `Zipper a -> Int` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L714) | `Zipper a -> Int` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L752) | `Zipper a -> Int` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L903) | `Zipper a -> Int` |
 
@@ -432,13 +450,13 @@
 ### position
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L981) | `Zipper a -> Int` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L853) | `Zipper a -> Int` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L878) | `Zipper a -> Int` |
 
 ### positionFromEnd
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L987) | `Zipper a -> Int` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L611) | `Zipper a -> Int` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L890) | `Zipper a -> Int` |
 
 ### positionLeft
@@ -483,48 +501,48 @@
 ### indexedMap
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L576) | `IndexMethod -> (Position -> Int -> a -> b) -> Zipper a -> Zipper b` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L448) | `IndexMethod -> (Position -> Int -> a -> b) -> Zipper a -> Zipper b` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L479) | `IndexMethod -> (Position -> Int -> a -> b) -> Zipper a -> Zipper b` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L538) | `IndexMethod -> (Position -> Int -> a -> b) -> Zipper a -> Zipper b` |
 
 ### indexedMapLeft
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L589) | `IndexMethod -> (Position -> Int -> a -> a) -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L319) | `IndexMethod -> (Position -> Int -> a -> a) -> Zipper a -> Zipper a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L492) | `IndexMethod -> (Position -> Int -> a -> a) -> Zipper a -> Zipper a` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L551) | `IndexMethod -> (Position -> Int -> a -> a) -> Zipper a -> Zipper a` |
 
 ### indexedMapRight
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L602) | `IndexMethod -> (Position -> Int -> a -> a) -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L332) | `IndexMethod -> (Position -> Int -> a -> a) -> Zipper a -> Zipper a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L505) | `IndexMethod -> (Position -> Int -> a -> a) -> Zipper a -> Zipper a` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L564) | `IndexMethod -> (Position -> Int -> a -> a) -> Zipper a -> Zipper a` |
 
 ### indexedMapSelected
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L615) | `IndexMethod -> (Position -> Int -> a -> a) -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L345) | `IndexMethod -> (Position -> Int -> a -> a) -> Zipper a -> Zipper a` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L577) | `IndexMethod -> (Position -> Int -> a -> a) -> Zipper a -> Zipper a` |
 
 ### map
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L854) | `(a -> b) -> Zipper a -> Zipper b` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L726) | `(a -> b) -> Zipper a -> Zipper b` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L764) | `(a -> b) -> Zipper a -> Zipper b` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L915) | `(a -> b) -> Zipper a -> Zipper b` |
 
 ### mapLeft
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L860) | `(a -> a) -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L536) | `(a -> a) -> Zipper a -> Zipper a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L776) | `(a -> a) -> Zipper a -> Zipper a` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L924) | `(a -> a) -> Zipper a -> Zipper a` |
 
 ### mapRight
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L866) | `(a -> a) -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L542) | `(a -> a) -> Zipper a -> Zipper a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L788) | `(a -> a) -> Zipper a -> Zipper a` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L930) | `(a -> a) -> Zipper a -> Zipper a` |
 
@@ -536,7 +554,7 @@
 ### mapSeparately
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L878) | `(a -> b) -> (a -> b) -> (a -> b) -> Zipper a -> Zipper b` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L554) | `(a -> b) -> (a -> b) -> (a -> b) -> Zipper a -> Zipper b` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L800) | `(a -> b) -> (a -> b) -> Zipper a -> Zipper b` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L942) | `(a -> b) -> (a -> b) -> (a -> b) -> Zipper a -> Zipper b` |
 
@@ -558,7 +576,7 @@
 ### moveLeft
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L894) | `Zipper a -> Maybe (Zipper a)` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L766) | `Zipper a -> Maybe (Zipper a)` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L806) | `Zipper a -> Maybe (Zipper a)` |
 
 ### moveLeftToFirst
@@ -589,13 +607,13 @@
 ### moveLeftUntil
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L906) | `(List a -> a -> List a -> Bool) -> Zipper a -> Maybe (Zipper a)` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L566) | `(List a -> a -> List a -> Bool) -> Zipper a -> Maybe (Zipper a)` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L817) | `(List a -> List a -> Bool) -> Zipper a -> Maybe (Zipper a)` |
 
 ### moveRight
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L922) | `Zipper a -> Maybe (Zipper a)` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L794) | `Zipper a -> Maybe (Zipper a)` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L823) | `Zipper a -> Maybe (Zipper a)` |
 
 ### moveRightToLast
@@ -626,29 +644,29 @@
 ### moveRightUntil
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L934) | `(List a -> a -> List a -> Bool) -> Zipper a -> Maybe (Zipper a)` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L578) | `(List a -> a -> List a -> Bool) -> Zipper a -> Maybe (Zipper a)` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L834) | `(List a -> List a -> Bool) -> Zipper a -> Maybe (Zipper a)` |
 
 ### moveToFirst
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L941) | `Zipper a -> Zipper a` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L813) | `Zipper a -> Zipper a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L841) | `Zipper a -> Zipper a` |
 
 ### moveToIndex
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L955) | `Int -> Zipper a -> Maybe (Zipper a)` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L585) | `Int -> Zipper a -> Maybe (Zipper a)` |
 
 ### moveToIndexRelative
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L975) | `Int -> Zipper a -> Maybe (Zipper a)` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L605) | `Int -> Zipper a -> Maybe (Zipper a)` |
 
 ### moveToLast
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L948) | `Zipper a -> Zipper a` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L820) | `Zipper a -> Zipper a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L848) | `Zipper a -> Zipper a` |
 
 ### moveToN
@@ -660,7 +678,7 @@
 ### tryMoveLeft
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1367) | `Zipper a -> Zipper a` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1239) | `Zipper a -> Zipper a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L1120) | `Zipper a -> Zipper a` |
 
 ### tryMoveLeftToLeft
@@ -676,7 +694,7 @@
 ### tryMoveRight
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1383) | `Zipper a -> Zipper a` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1255) | `Zipper a -> Zipper a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L1128) | `Zipper a -> Zipper a` |
 
 ### tryMoveRightToLeft
@@ -692,12 +710,12 @@
 ### tryMoveToIndex
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1390) | `Int -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L851) | `Int -> Zipper a -> Zipper a` |
 
 ### tryMoveToIndexRelative
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1398) | `Int -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L859) | `Int -> Zipper a -> Zipper a` |
 
 ### tryMoveToN
 | filepath | signature |
@@ -713,21 +731,21 @@
 ### reverse
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L999) | `Zipper a -> Zipper a` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L871) | `Zipper a -> Zipper a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L896) | `Zipper a -> Zipper a` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L1063) | `Zipper a -> Zipper a` |
 
 ### reverseLeft
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1005) | `Zipper a -> Zipper a` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L623) | `Zipper a -> Zipper a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L910) | `Zipper a -> Zipper a` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L1069) | `Zipper a -> Zipper a` |
 
 ### reverseRight
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1011) | `Zipper a -> Zipper a` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L629) | `Zipper a -> Zipper a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L916) | `Zipper a -> Zipper a` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L1075) | `Zipper a -> Zipper a` |
 
@@ -744,25 +762,25 @@
 ### setAt
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1017) | `Int -> a -> Zipper a -> Maybe (Zipper a)` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L635) | `Int -> a -> Zipper a -> Maybe (Zipper a)` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L928) | `Int -> a -> Zipper a -> Maybe (Zipper a)` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L1103) | `Int -> a -> Zipper a -> Maybe (Zipper a)` |
 
 ### setAtClamp
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1046) | `Int -> a -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L664) | `Int -> a -> Zipper a -> Zipper a` |
 
 ### setAtRelative
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1056) | `Int -> a -> Zipper a -> Maybe (Zipper a)` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L674) | `Int -> a -> Zipper a -> Maybe (Zipper a)` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L940) | `RelativeIndex -> a -> Zipper a -> Maybe (Zipper a)` |
 
 ### setAtRelativeClamp
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1062) | `Int -> a -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L680) | `Int -> a -> Zipper a -> Zipper a` |
 
 ### setAtRelativeLeft
 | filepath | signature |
@@ -777,44 +795,44 @@
 ### setFirst
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1068) | `a -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L940) | `a -> Zipper a -> Zipper a` |
 
 ### setLast
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1079) | `a -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L951) | `a -> Zipper a -> Zipper a` |
 
 ### setLeft
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1090) | `List a -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L962) | `List a -> Zipper a -> Zipper a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L959) | `List a -> Zipper a -> Zipper a` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L1144) | `List a -> Zipper a -> Zipper a` |
 
 ### setRight
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1096) | `List a -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L968) | `List a -> Zipper a -> Zipper a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L971) | `List a -> Zipper a -> Zipper a` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L1150) | `List a -> Zipper a -> Zipper a` |
 
 ### setSelected
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1102) | `a -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L974) | `a -> Zipper a -> Zipper a` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L1156) | `List a -> Zipper a -> Zipper a` |
 
 ### trySetAt
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1405) | `Int -> a -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L866) | `Int -> a -> Zipper a -> Zipper a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L1078) | `Int -> a -> Zipper a -> Zipper a` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L1253) | `Int -> a -> Zipper a -> Zipper a` |
 
 ### trySetAtRelative
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1412) | `Int -> a -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L873) | `Int -> a -> Zipper a -> Zipper a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L1090) | `RelativeIndex -> a -> Zipper a -> Zipper a` |
 
 ### trySetAtRelativeLeft
@@ -835,34 +853,34 @@
 ### sortByKeepElem
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1118) | `(a -> comparable) -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L686) | `(a -> comparable) -> Zipper a -> Zipper a` |
 
 ### sortByKeepIndex
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1138) | `(a -> comparable) -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L706) | `(a -> comparable) -> Zipper a -> Zipper a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L977) | `(a -> comparable) -> Zipper a -> Zipper a` |
 
 ### sortKeepElem
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1206) | `Zipper comparable -> Zipper comparable` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1078) | `Zipper comparable -> Zipper comparable` |
 
 ### sortKeepIndex
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1227) | `Zipper comparable -> Zipper comparable` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1099) | `Zipper comparable -> Zipper comparable` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L987) | `Zipper comparable -> Zipper comparable` |
 
 ### sortWithKeepElem
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1239) | `(a -> a -> Order) -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L764) | `(a -> a -> Order) -> Zipper a -> Zipper a` |
 
 ### sortWithKeepIndex
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1259) | `(a -> a -> Order) -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L784) | `(a -> a -> Order) -> Zipper a -> Zipper a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L997) | `(a -> a -> Order) -> Zipper a -> Zipper a` |
 
 
@@ -873,24 +891,24 @@
 ### swap
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1271) | `Zipper a -> Zipper a` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L796) | `Zipper a -> Zipper a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L1007) | `Int -> Int -> Zipper a -> Maybe (Zipper a)` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L1192) | `Zipper a -> Zipper a` |
 
 ### swapSelectedWithFirst
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1277) | `Zipper a -> Zipper a` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L802) | `Zipper a -> Zipper a` |
 
 ### swapSelectedWithIndex
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1299) | `Int -> Zipper a -> Maybe (Zipper a)` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L824) | `Int -> Zipper a -> Maybe (Zipper a)` |
 
 ### swapSelectedWithLast
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1288) | `Zipper a -> Zipper a` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L813) | `Zipper a -> Zipper a` |
 
 ### trySwap
 | filepath | signature |
@@ -900,7 +918,7 @@
 ### trySwapSelectedWithIndex
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1419) | `Int -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L880) | `Int -> Zipper a -> Zipper a` |
 
 
 
@@ -910,14 +928,14 @@
 ### toList
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1325) | `Zipper a -> List a` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1197) | `Zipper a -> List a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L1029) | `Zipper a -> List a` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L1198) | `Zipper a -> List a` |
 
 ### toTuple
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1331) | `Zipper a -> ( List a, a, List a )` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1203) | `Zipper a -> ( List a, a, List a )` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L1042) | `Zipper a -> ( List a, List a )` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L1204) | `Zipper a -> ( List a, List a, List a )` |
 
@@ -930,13 +948,13 @@
 ### toZipperListList
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1343) | `Zipper a -> ( List a, List a )` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1215) | `Zipper a -> ( List a, List a )` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L1216) | `Zipper a -> ( List a, List a )` |
 
 ### toZipperListListList
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1355) | `(a -> List a) -> Zipper a -> ( List a, List a, List a )` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1227) | `(a -> List a) -> Zipper a -> ( List a, List a, List a )` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L1066) | `List a -> Zipper a -> ( List a, List a, List a )` |
 
 
@@ -947,14 +965,14 @@
 ### tryUpdateAt
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1426) | `Int -> (a -> a) -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L887) | `Int -> (a -> a) -> Zipper a -> Zipper a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L1097) | `Int -> (a -> a) -> Zipper a -> Zipper a` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L1274) | `Int -> (a -> a) -> Zipper a -> Zipper a` |
 
 ### tryUpdateAtRelative
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1433) | `Int -> (a -> a) -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L894) | `Int -> (a -> a) -> Zipper a -> Zipper a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L1113) | `RelativeIndex -> (a -> a) -> Zipper a -> Zipper a` |
 
 ### tryUpdateAtRelativeLeft
@@ -970,32 +988,32 @@
 ### update
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1440) | `(List a -> List a) -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1312) | `(List a -> List a) -> Zipper a -> Zipper a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L1156) | `(List a -> List b) -> Zipper a -> Zipper b` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L1295) | `(List a -> List b) -> Zipper a -> Zipper b` |
 
 ### updateAt
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1449) | `Int -> (a -> a) -> Zipper a -> Maybe (Zipper a)` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L901) | `Int -> (a -> a) -> Zipper a -> Maybe (Zipper a)` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L1162) | `Int -> (a -> a) -> Zipper a -> Maybe (Zipper a)` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L1339) | `Int -> (a -> a) -> Zipper a -> Maybe (Zipper a)` |
 
 ### updateAtClamp
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1478) | `Int -> (a -> a) -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L930) | `Int -> (a -> a) -> Zipper a -> Zipper a` |
 
 ### updateAtRelative
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1488) | `Int -> (a -> a) -> Zipper a -> Maybe (Zipper a)` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L940) | `Int -> (a -> a) -> Zipper a -> Maybe (Zipper a)` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L1182) | `RelativeIndex -> (a -> a) -> Zipper a -> Maybe (Zipper a)` |
 
 ### updateAtRelativeClamp
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1494) | `Int -> (a -> a) -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L946) | `Int -> (a -> a) -> Zipper a -> Zipper a` |
 
 ### updateAtRelativeLeft
 | filepath | signature |
@@ -1010,27 +1028,27 @@
 ### updateLeft
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1500) | `(List a -> List a) -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1372) | `(List a -> List a) -> Zipper a -> Zipper a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L1201) | `(List a -> List a) -> Zipper a -> Zipper a` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L1301) | `(List a -> List a) -> Zipper a -> Zipper a` |
 
 ### updateRight
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1506) | `(List a -> List a) -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1378) | `(List a -> List a) -> Zipper a -> Zipper a` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L1213) | `(List a -> List a) -> Zipper a -> Zipper a` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L1307) | `(List a -> List a) -> Zipper a -> Zipper a` |
 
 ### updateSelected
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1512) | `(a -> a) -> Zipper a -> Zipper a` |
+| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1384) | `(a -> a) -> Zipper a -> Zipper a` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L1313) | `(List a -> List a) -> Zipper a -> Zipper a` |
 
 ### updateSeparately
 | filepath | signature |
 | :--- | :--- |
-| [Zipper/ListElemList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList.elm#L1518) | `(List a -> List b) -> (a -> b) -> (List a -> List b) -> Zipper a -> Zipper b` |
+| [Zipper/ListElemList/Extra.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListElemList/Extra.elm#L952) | `(List a -> List b) -> (a -> b) -> (List a -> List b) -> Zipper a -> Zipper b` |
 | [Zipper/ListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListList.elm#L1227) | `(List a -> List b) -> (List a -> List b) -> Zipper a -> Zipper b` |
 | [Zipper/ListListList.elm](https://github.com/coreygirard/elm-zipper/blob/main/src/Zipper/ListListList.elm#L1319) | `(List a -> List b) -> (List a -> List b) -> (List a -> List b) -> Zipper a -> Zipper b` |
 

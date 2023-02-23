@@ -1,5 +1,16 @@
 # elm-zipper
 
+
+
+| shape                      | allows any types                 | `a == b == c`           | `a == b == c == Char`         |
+|:---------------------------|:---------------------------------|:------------------------|:------------------------------|
+| `(List a, List b)`         | [Zipper.ListList.Advanced]()     | [Zipper.ListList]()     | [Zipper.StringString]()       |
+| `(List a, b, List c)`      | [Zipper.ListElemList.Advanced]() | [Zipper.ListElemList]() | [Zipper.StringCharString]()   |
+| `(List a, List b, List c)` | [Zipper.ListListList.Advanced]() | [Zipper.ListListList]() | [Zipper.StringStringString]() |
+
+And then there's also [Zipper.StringStringString.WithCursor]()
+
+
 For most uses, look at `Zipper.ListElemList`, `Zipper.ListList` and `Zipper.ListListList` first.
 
 
