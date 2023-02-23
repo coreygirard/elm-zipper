@@ -131,6 +131,58 @@ type alias Dists =
     { fromLeft : Int, fromRight : Int }
 
 
+{-|
+
+    zipper : Zipper Int
+    zipper = fromTuple ([1,2,3],[4,5,6],[7,8,9])
+
+    absoluteIndexToPosDists zipper -1 --> Nothing
+
+    absoluteIndexToPosDists zipper 0 --> Just (Left, {fromLeft=0,fromRight=2})
+
+    absoluteIndexToPosDists zipper 2 --> Just (Left, {fromLeft=2,fromRight=0})
+
+    absoluteIndexToPosDists zipper 3 --> Just (Selected, {fromLeft=0,fromRight=2})
+
+    absoluteIndexToPosDists zipper 5 --> Just (Selected, {fromLeft=2,fromRight=0})
+
+    absoluteIndexToPosDists zipper 6 --> Just (Right, {fromLeft=0,fromRight=2})
+
+    absoluteIndexToPosDists zipper 8 --> Just (Right, {fromLeft=2,fromRight=0})
+
+    absoluteIndexToPosDists zipper 9 --> Nothing
+
+-}
+absoluteIndexToPosDists : Zipper a -> Int -> Maybe ( Position, Dists )
+absoluteIndexToPosDists ( left, selected, right ) i =
+    if i >= 0 && i < length ( left, [], [] ) then
+        Just
+            ( Left
+            , { fromLeft = i
+              , fromRight = length ( left, [], [] ) - i - 1
+              }
+            )
+
+    else if i >= length ( left, [], [] ) && i < length ( left, selected, [] ) then
+        Just
+            ( Selected
+            , { fromLeft = i - length ( left, [], [] )
+              , fromRight = length ( left, selected, [] ) - i - 1
+              }
+            )
+
+    else if i >= length ( left, selected, [] ) && i < length ( left, selected, right ) then
+        Just
+            ( Right
+            , { fromLeft = i - length ( left, selected, [] )
+              , fromRight = length ( left, selected, right ) - i - 1
+              }
+            )
+
+    else
+        Nothing
+
+
 {-| Create an empty zipper
 
     empty --> ( [], [], [] )
@@ -142,15 +194,54 @@ empty =
 
 
 {-| -}
-fromTuple : ( List a, List a, List a ) -> Zipper a
-fromTuple ( left, selected, right ) =
-    ( List.reverse left, selected, right )
+filter : (a -> Bool) -> Zipper a -> Zipper a
+filter f ( left, selected, right ) =
+    ( List.filter f left
+    , List.filter f selected
+    , List.filter f right
+    )
 
 
 {-| -}
-fromZipperListList : List a -> ( List a, List a ) -> Zipper a
-fromZipperListList selected ( left, right ) =
-    ( left, selected, right )
+filterLeft : (a -> Bool) -> Zipper a -> Zipper a
+filterLeft f ( left, selected, right ) =
+    ( List.filter f left
+    , selected
+    , right
+    )
+
+
+{-| -}
+filterRight : (a -> Bool) -> Zipper a -> Zipper a
+filterRight f ( left, selected, right ) =
+    ( left
+    , selected
+    , List.filter f right
+    )
+
+
+{-| -}
+filterSelected : (a -> Bool) -> Zipper a -> Zipper a
+filterSelected f ( left, selected, right ) =
+    ( left
+    , List.filter f selected
+    , right
+    )
+
+
+{-| -}
+filterSeparately : (a -> Bool) -> (a -> Bool) -> (a -> Bool) -> Zipper a -> Zipper a
+filterSeparately fLeft fSelected fRight ( left, selected, right ) =
+    ( List.filter fLeft left
+    , List.filter fSelected selected
+    , List.filter fRight right
+    )
+
+
+{-| -}
+fromTuple : ( List a, List a, List a ) -> Zipper a
+fromTuple ( left, selected, right ) =
+    ( List.reverse left, selected, right )
 
 
 {-| -}
@@ -160,93 +251,9 @@ fromZipperListElemList f ( left, selected, right ) =
 
 
 {-| -}
-toTuple : Zipper a -> ( List a, List a, List a )
-toTuple ( left, selected, right ) =
-    ( List.reverse left, selected, right )
-
-
-{-| -}
-toList : Zipper a -> List a
-toList ( left, selected, right ) =
-    List.reverse left ++ selected ++ right
-
-
-{-| -}
-toZipperListList : Zipper a -> ( List a, List a )
-toZipperListList ( left, _, right ) =
-    ( left, right )
-
-
-{-| -}
-toZipperListElemList : (List a -> a) -> Zipper a -> ( List a, a, List a )
-toZipperListElemList f ( left, selected, right ) =
-    ( left, f selected, right )
-
-
-{-| -}
-length : Zipper a -> Int
-length ( left, selected, right ) =
-    List.length left + List.length selected + List.length right
-
-
-{-| -}
-lengthLeft : Zipper a -> Int
-lengthLeft ( left, _, _ ) =
-    List.length left
-
-
-{-| -}
-lengthSelected : Zipper a -> Int
-lengthSelected ( _, selected, _ ) =
-    List.length selected
-
-
-{-| -}
-lengthRight : Zipper a -> Int
-lengthRight ( _, _, right ) =
-    List.length right
-
-
-{-| -}
-positionLeft : Zipper a -> Int
-positionLeft ( left, _, _ ) =
-    List.length left
-
-
-{-| -}
-positionRight : Zipper a -> Int
-positionRight ( left, selected, _ ) =
-    List.length left + List.length selected
-
-
-{-| -}
-positionLeftFromEnd : Zipper a -> Int
-positionLeftFromEnd ( _, selected, right ) =
-    List.length selected + List.length right
-
-
-{-| -}
-positionRightFromEnd : Zipper a -> Int
-positionRightFromEnd ( _, _, right ) =
-    List.length right
-
-
-{-| -}
-getLeft : Zipper a -> List a
-getLeft ( left, _, _ ) =
-    left
-
-
-{-| -}
-getSelected : Zipper a -> List a
-getSelected ( _, selected, _ ) =
-    selected
-
-
-{-| -}
-getRight : Zipper a -> List a
-getRight ( _, _, right ) =
-    right
+fromZipperListList : List a -> ( List a, List a ) -> Zipper a
+fromZipperListList selected ( left, right ) =
+    ( left, selected, right )
 
 
 {-| -}
@@ -313,601 +320,21 @@ getAtRelativeRight i zipper =
 
 
 {-| -}
-setLeft : List a -> Zipper a -> Zipper a
-setLeft left ( _, selected, right ) =
-    ( List.reverse left, selected, right )
+getLeft : Zipper a -> List a
+getLeft ( left, _, _ ) =
+    left
 
 
 {-| -}
-setSelected : List a -> Zipper a -> Zipper a
-setSelected selected ( left, _, right ) =
-    ( left, selected, right )
+getRight : Zipper a -> List a
+getRight ( _, _, right ) =
+    right
 
 
 {-| -}
-setRight : List a -> Zipper a -> Zipper a
-setRight right ( left, selected, _ ) =
-    ( left, selected, right )
-
-
-{-| -}
-setAt : Int -> a -> Zipper a -> Maybe (Zipper a)
-setAt i elem (( left, selected, right ) as zipper) =
-    case absoluteIndexToPosDists zipper i of
-        Just ( Left, { fromRight } ) ->
-            Just
-                ( List.Extra.setAt fromRight elem left
-                , selected
-                , right
-                )
-
-        Just ( Selected, { fromLeft } ) ->
-            Just
-                ( left
-                , List.Extra.setAt fromLeft elem selected
-                , right
-                )
-
-        Just ( Right, { fromLeft } ) ->
-            Just
-                ( left
-                , selected
-                , List.Extra.setAt fromLeft elem right
-                )
-
-        Nothing ->
-            Nothing
-
-
-{-| -}
-trySetAt : Int -> a -> Zipper a -> Zipper a
-trySetAt i elem zipper =
-    setAt i elem zipper
-        |> Maybe.withDefault zipper
-
-
-{-| -}
-setAtRelativeLeft : RelativeIndex -> a -> Zipper a -> Maybe (Zipper a)
-setAtRelativeLeft i elem zipper =
-    setAt (indexRelativeLeftToAbsolute zipper i) elem zipper
-
-
-{-| -}
-trySetAtRelativeLeft : RelativeIndex -> a -> Zipper a -> Zipper a
-trySetAtRelativeLeft i elem zipper =
-    setAtRelativeLeft i elem zipper
-        |> Maybe.withDefault zipper
-
-
-{-| -}
-setAtRelativeRight : RelativeIndex -> a -> Zipper a -> Maybe (Zipper a)
-setAtRelativeRight i elem zipper =
-    setAt (indexRelativeRightToAbsolute zipper i) elem zipper
-
-
-{-| -}
-trySetAtRelativeRight : RelativeIndex -> a -> Zipper a -> Zipper a
-trySetAtRelativeRight i elem zipper =
-    setAtRelativeRight i elem zipper
-        |> Maybe.withDefault zipper
-
-
-{-| -}
-map : (a -> b) -> Zipper a -> Zipper b
-map f ( left, selected, right ) =
-    ( List.map f left
-    , List.map f selected
-    , List.map f right
-    )
-
-
-{-| -}
-mapSeparately : (a -> b) -> (a -> b) -> (a -> b) -> Zipper a -> Zipper b
-mapSeparately fLeft fSelected fRight ( left, selected, right ) =
-    ( List.map fLeft left
-    , List.map fSelected selected
-    , List.map fRight right
-    )
-
-
-{-| -}
-mapLeft : (a -> a) -> Zipper a -> Zipper a
-mapLeft f ( left, selected, right ) =
-    ( List.map f left, selected, right )
-
-
-{-| -}
-mapSelected : (a -> a) -> Zipper a -> Zipper a
-mapSelected f ( left, selected, right ) =
-    ( left, List.map f selected, right )
-
-
-{-| -}
-mapRight : (a -> a) -> Zipper a -> Zipper a
-mapRight f ( left, selected, right ) =
-    ( left, selected, List.map f right )
-
-
-{-| -}
-indexedMap : IndexMethod -> (Position -> Int -> a -> b) -> Zipper a -> Zipper b
-indexedMap indexMethod f (( left, selected, right ) as zipper) =
-    let
-        indexes =
-            indexRangeFromMethod indexMethod zipper
-    in
-    ( List.map2 (\i elem -> f Left i elem) indexes.left left
-    , List.map2 (\i elem -> f Selected i elem) indexes.selected selected
-    , List.map2 (\i elem -> f Right i elem) indexes.right right
-    )
-
-
-{-| -}
-indexedMapLeft : IndexMethod -> (Position -> Int -> a -> a) -> Zipper a -> Zipper a
-indexedMapLeft indexMethod f (( left, selected, right ) as zipper) =
-    let
-        indexes =
-            indexRangeFromMethod indexMethod zipper
-    in
-    ( List.map2 (\i elem -> f Left i elem) indexes.left left
-    , selected
-    , right
-    )
-
-
-{-| -}
-indexedMapSelected : IndexMethod -> (Position -> Int -> a -> a) -> Zipper a -> Zipper a
-indexedMapSelected indexMethod f (( left, selected, right ) as zipper) =
-    let
-        indexes =
-            indexRangeFromMethod indexMethod zipper
-    in
-    ( left
-    , List.map2 (\i elem -> f Selected i elem) indexes.selected selected
-    , right
-    )
-
-
-{-| -}
-indexedMapRight : IndexMethod -> (Position -> Int -> a -> a) -> Zipper a -> Zipper a
-indexedMapRight indexMethod f (( left, selected, right ) as zipper) =
-    let
-        indexes =
-            indexRangeFromMethod indexMethod zipper
-    in
-    ( left
-    , selected
-    , List.map2 (\i elem -> f Right i elem) indexes.right right
-    )
-
-
-{-| -}
-update : (List a -> List b) -> Zipper a -> Zipper b
-update f ( left, selected, right ) =
-    ( left |> List.reverse |> f |> List.reverse, f selected, f right )
-
-
-{-| -}
-updateSeparately : (List a -> List b) -> (List a -> List b) -> (List a -> List b) -> Zipper a -> Zipper b
-updateSeparately fLeft fSelected fRight ( left, selected, right ) =
-    ( left |> List.reverse |> fLeft |> List.reverse, fSelected selected, fRight right )
-
-
-{-| -}
-updateLeft : (List a -> List a) -> Zipper a -> Zipper a
-updateLeft fLeft ( left, selected, right ) =
-    ( left |> List.reverse |> fLeft |> List.reverse, selected, right )
-
-
-{-| -}
-updateSelected : (List a -> List a) -> Zipper a -> Zipper a
-updateSelected fSelected ( left, selected, right ) =
-    ( left, fSelected selected, right )
-
-
-{-| -}
-updateRight : (List a -> List a) -> Zipper a -> Zipper a
-updateRight fRight ( left, selected, right ) =
-    ( left, selected, fRight right )
-
-
-{-|
-
-    zipper : Zipper Int
-    zipper = fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
-
-    updateAt 2 ((+) 10) zipper
-        --> Just (fromTuple ( [ 1, 2, 13 ], [ 4, 5, 6 ], [ 7, 8, 9 ] ))
-
-    updateAt 5 ((+) 10) zipper
-        --> Just (fromTuple ( [ 1, 2, 3 ], [ 4, 5, 16 ], [ 7, 8, 9 ] ))
-
-    updateAt 9 ((+) 10) zipper
-        --> Nothing
-
--}
-updateAt : Int -> (a -> a) -> Zipper a -> Maybe (Zipper a)
-updateAt i f (( left, selected, right ) as zipper) =
-    case absoluteIndexToPosDists zipper i of
-        Just ( Left, { fromRight } ) ->
-            Just
-                ( List.Extra.updateAt fromRight f left
-                , selected
-                , right
-                )
-
-        Just ( Selected, { fromLeft } ) ->
-            Just
-                ( left
-                , List.Extra.updateAt fromLeft f selected
-                , right
-                )
-
-        Just ( Right, { fromLeft } ) ->
-            Just
-                ( left
-                , selected
-                , List.Extra.updateAt fromLeft f right
-                )
-
-        Nothing ->
-            Nothing
-
-
-{-| -}
-tryUpdateAt : Int -> (a -> a) -> Zipper a -> Zipper a
-tryUpdateAt i f zipper =
-    updateAt i f zipper
-        |> Maybe.withDefault zipper
-
-
-{-| -}
-updateAtRelativeLeft : RelativeIndex -> (a -> a) -> Zipper a -> Maybe (Zipper a)
-updateAtRelativeLeft i f zipper =
-    updateAt (indexRelativeLeftToAbsolute zipper i) f zipper
-
-
-{-| -}
-tryUpdateAtRelativeLeft : RelativeIndex -> (a -> a) -> Zipper a -> Zipper a
-tryUpdateAtRelativeLeft i f zipper =
-    updateAtRelativeLeft i f zipper
-        |> Maybe.withDefault zipper
-
-
-{-| -}
-updateAtRelativeRight : RelativeIndex -> (a -> a) -> Zipper a -> Maybe (Zipper a)
-updateAtRelativeRight i f zipper =
-    updateAt (indexRelativeRightToAbsolute zipper i) f zipper
-
-
-{-| -}
-tryUpdateAtRelativeRight : RelativeIndex -> (a -> a) -> Zipper a -> Zipper a
-tryUpdateAtRelativeRight i f zipper =
-    updateAtRelativeRight i f zipper
-        |> Maybe.withDefault zipper
-
-
-{-| -}
-filter : (a -> Bool) -> Zipper a -> Zipper a
-filter f ( left, selected, right ) =
-    ( List.filter f left
-    , List.filter f selected
-    , List.filter f right
-    )
-
-
-{-| -}
-filterSeparately : (a -> Bool) -> (a -> Bool) -> (a -> Bool) -> Zipper a -> Zipper a
-filterSeparately fLeft fSelected fRight ( left, selected, right ) =
-    ( List.filter fLeft left
-    , List.filter fSelected selected
-    , List.filter fRight right
-    )
-
-
-{-| -}
-filterLeft : (a -> Bool) -> Zipper a -> Zipper a
-filterLeft f ( left, selected, right ) =
-    ( List.filter f left
-    , selected
-    , right
-    )
-
-
-{-| -}
-filterSelected : (a -> Bool) -> Zipper a -> Zipper a
-filterSelected f ( left, selected, right ) =
-    ( left
-    , List.filter f selected
-    , right
-    )
-
-
-{-| -}
-filterRight : (a -> Bool) -> Zipper a -> Zipper a
-filterRight f ( left, selected, right ) =
-    ( left
-    , selected
-    , List.filter f right
-    )
-
-
-{-| -}
-indexedFilter : IndexMethod -> (Position -> Int -> a -> Bool) -> Zipper a -> Zipper a
-indexedFilter indexMethod f (( left, selected, right ) as zipper) =
-    let
-        indexes =
-            indexRangeFromMethod indexMethod zipper
-    in
-    ( List.map2 (\i elem -> ( f Left i elem, elem )) indexes.left left
-        |> List.filter Tuple.first
-        |> List.map Tuple.second
-    , List.map2 (\i elem -> ( f Selected i elem, elem )) indexes.selected selected
-        |> List.filter Tuple.first
-        |> List.map Tuple.second
-    , List.map2 (\i elem -> ( f Right i elem, elem )) indexes.right right
-        |> List.filter Tuple.first
-        |> List.map Tuple.second
-    )
-
-
-{-| -}
-indexedFilterLeft : IndexMethod -> (Position -> Int -> a -> Bool) -> Zipper a -> Zipper a
-indexedFilterLeft indexMethod f (( left, selected, right ) as zipper) =
-    let
-        indexes =
-            indexRangeFromMethod indexMethod zipper
-    in
-    ( List.map2 (\i elem -> ( f Left i elem, elem )) indexes.left left
-        |> List.filter Tuple.first
-        |> List.map Tuple.second
-    , selected
-    , right
-    )
-
-
-{-| -}
-indexedFilterSelected : IndexMethod -> (Position -> Int -> a -> Bool) -> Zipper a -> Zipper a
-indexedFilterSelected indexMethod f (( left, selected, right ) as zipper) =
-    let
-        indexes =
-            indexRangeFromMethod indexMethod zipper
-    in
-    ( left
-    , List.map2 (\i elem -> ( f Selected i elem, elem )) indexes.selected selected
-        |> List.filter Tuple.first
-        |> List.map Tuple.second
-    , right
-    )
-
-
-{-| -}
-indexedFilterRight : IndexMethod -> (Position -> Int -> a -> Bool) -> Zipper a -> Zipper a
-indexedFilterRight indexMethod f (( left, selected, right ) as zipper) =
-    let
-        indexes =
-            indexRangeFromMethod indexMethod zipper
-    in
-    ( left
-    , selected
-    , List.map2 (\i elem -> ( f Right i elem, elem )) indexes.right right
-        |> List.filter Tuple.first
-        |> List.map Tuple.second
-    )
-
-
-{-| Attempt to move left edge of selection to left
-
-    fromTuple ( [ 1, 2 ], [ 3, 4 ], [ 5, 6 ] )
-        |> moveLeftToLeft
-        --> Ok (fromTuple ( [ 1 ], [ 2, 3, 4 ], [ 5, 6 ] ))
-
-    fromTuple ( [], [ 3, 4 ], [ 5, 6 ] )
-        |> moveLeftToLeft
-        --> Err (fromTuple ( [], [ 3, 4 ], [ 5, 6 ] ))
-
--}
-moveLeftToLeft : Zipper a -> Maybe (Zipper a)
-moveLeftToLeft zipper =
-    Adv.moveLeftToLeft identity zipper
-
-
-{-| -}
-tryMoveLeftToLeft : Zipper a -> Zipper a
-tryMoveLeftToLeft zipper =
-    zipper
-
-
-{-| -}
-moveLeftToLeftUntil : (List a -> List a -> List a -> Bool) -> Zipper a -> Maybe (Zipper a)
-moveLeftToLeftUntil f zipper =
-    Adv.moveLeftToLeftUntil identity f zipper
-
-
-{-| -}
-moveLeftToRightUntil : (List a -> List a -> List a -> Bool) -> Zipper a -> Maybe (Zipper a)
-moveLeftToRightUntil f zipper =
-    Adv.moveLeftToRightUntil identity f zipper
-
-
-{-| -}
-moveRightToLeftUntil : (List a -> List a -> List a -> Bool) -> Zipper a -> Maybe (Zipper a)
-moveRightToLeftUntil f zipper =
-    Adv.moveRightToLeftUntil identity f zipper
-
-
-{-| -}
-moveRightToRightUntil : (List a -> List a -> List a -> Bool) -> Zipper a -> Maybe (Zipper a)
-moveRightToRightUntil f zipper =
-    Adv.moveRightToRightUntil identity f zipper
-
-
-{-| -}
-moveLeftToRight : Zipper a -> Zipper a
-moveLeftToRight zipper =
-    zipper
-
-
-{-| -}
-tryMoveLeftToRight : Zipper a -> Zipper a
-tryMoveLeftToRight zipper =
-    zipper
-
-
-{-| -}
-moveRightToLeft : Zipper a -> Zipper a
-moveRightToLeft zipper =
-    zipper
-
-
-{-| -}
-tryMoveRightToLeft : Zipper a -> Zipper a
-tryMoveRightToLeft zipper =
-    zipper
-
-
-{-| -}
-moveRightToRight : Zipper a -> Zipper a
-moveRightToRight zipper =
-    zipper
-
-
-{-| -}
-tryMoveRightToRight : Zipper a -> Zipper a
-tryMoveRightToRight zipper =
-    zipper
-
-
-{-| -}
-moveBothToFirst : Zipper a -> Zipper a
-moveBothToFirst zipper =
-    fromTuple ( toList zipper, [], [] )
-
-
-{-| -}
-moveLeftToFirst : Zipper a -> Zipper a
-moveLeftToFirst zipper =
-    fromTuple ( toList zipper, [], [] )
-
-
-{-| -}
-moveBothToLast : Zipper a -> Zipper a
-moveBothToLast zipper =
-    fromTuple ( [], [], toList zipper )
-
-
-{-| -}
-moveRightToLast : Zipper a -> Zipper a
-moveRightToLast zipper =
-    fromTuple ( [], [], toList zipper )
-
-
-{-| -}
-moveToN : Int -> Int -> Zipper a -> Maybe (Zipper a)
-moveToN i j zipper =
-    Nothing
-
-
-{-| -}
-tryMoveToN : Int -> Int -> Zipper a -> Zipper a
-tryMoveToN i j zipper =
-    moveToN i j zipper
-        |> Maybe.withDefault zipper
-
-
-{-| -}
-insertFirst : a -> Zipper a -> Zipper a
-insertFirst elem ( left, selected, right ) =
-    ( left ++ [ elem ], selected, right )
-
-
-{-| -}
-insertLast : a -> Zipper a -> Zipper a
-insertLast elem ( left, selected, right ) =
-    ( left, selected, right ++ [ elem ] )
-
-
-{-| -}
-insertLeftOfLeftSplit : a -> Zipper a -> Zipper a
-insertLeftOfLeftSplit elem ( left, selected, right ) =
-    ( [ elem ] ++ left, selected, right )
-
-
-{-| -}
-insertRightOfLeftSplit : a -> Zipper a -> Zipper a
-insertRightOfLeftSplit elem ( left, selected, right ) =
-    ( left, [ elem ] ++ selected, right )
-
-
-{-| -}
-insertLeftOfRightSplit : a -> Zipper a -> Zipper a
-insertLeftOfRightSplit elem ( left, selected, right ) =
-    ( left, selected ++ [ elem ], right )
-
-
-{-| -}
-insertRightOfRightSplit : a -> Zipper a -> Zipper a
-insertRightOfRightSplit elem ( left, selected, right ) =
-    ( left, selected, [ elem ] ++ right )
-
-
-{-| -}
-reverse : Zipper a -> Zipper a
-reverse ( left, selected, right ) =
-    ( List.reverse right, selected, List.reverse left )
-
-
-{-| -}
-reverseLeft : Zipper a -> Zipper a
-reverseLeft ( left, selected, right ) =
-    ( List.reverse left, selected, right )
-
-
-{-| -}
-reverseSelected : Zipper a -> Zipper a
-reverseSelected ( left, selected, right ) =
-    ( left, List.reverse selected, right )
-
-
-{-| -}
-reverseRight : Zipper a -> Zipper a
-reverseRight ( left, selected, right ) =
-    ( left, selected, List.reverse right )
-
-
-{-| -}
-swap : Zipper a -> Zipper a
-swap zipper =
-    zipper
-
-
-{-| -}
-sortKeepIndexes : Zipper comparable -> Zipper comparable
-sortKeepIndexes zipper =
-    zipper
-        |> moveBothToFirst
-        |> updateRight List.sort
-        |> moveToN (positionLeft zipper) (positionRight zipper)
-        |> Maybe.withDefault zipper
-
-
-{-| -}
-sortByKeepIndexes : (a -> comparable) -> Zipper a -> Zipper a
-sortByKeepIndexes f zipper =
-    zipper
-        |> moveBothToFirst
-        |> updateRight (List.sortBy f)
-        |> moveToN (positionLeft zipper) (positionRight zipper)
-        |> Maybe.withDefault zipper
-
-
-{-| -}
-sortWithKeepIndexes : (a -> a -> Order) -> Zipper a -> Zipper a
-sortWithKeepIndexes f zipper =
-    zipper
-        |> moveBothToFirst
-        |> updateRight (List.sortWith f)
-        |> moveToN (positionLeft zipper) (positionRight zipper)
-        |> Maybe.withDefault zipper
+getSelected : Zipper a -> List a
+getSelected ( _, selected, _ ) =
+    selected
 
 
 {-|
@@ -952,64 +379,6 @@ indexAbsoluteCheck ( left, selected, right ) i =
     zipper : Zipper Int
     zipper = ( [ 0, 0, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ] )
 
-    indexRelativeLeftCheck zipper (LeftIndex 3) --> Nothing
-
-    indexRelativeLeftCheck zipper (LeftIndex 2) --> Just Left
-
-    indexRelativeLeftCheck zipper (LeftIndex 0) --> Just Left
-
-    indexRelativeLeftCheck zipper (RightIndex 0) --> Just Selected
-
-    indexRelativeLeftCheck zipper (RightIndex 2) --> Just Selected
-
-    indexRelativeLeftCheck zipper (RightIndex 3) --> Just Right
-
-    indexRelativeLeftCheck zipper (RightIndex 5) --> Just Right
-
-    indexRelativeLeftCheck zipper (RightIndex 6) --> Nothing
-
--}
-indexRelativeLeftCheck : Zipper a -> RelativeIndex -> Maybe Position
-indexRelativeLeftCheck zipper i =
-    indexAbsoluteCheck
-        zipper
-        (indexRelativeLeftToAbsolute zipper i)
-
-
-{-|
-
-    zipper : Zipper Int
-    zipper = ( [ 0, 0, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ] )
-
-    indexRelativeRightCheck zipper (LeftIndex 6) --> Nothing
-
-    indexRelativeRightCheck zipper (LeftIndex 5) --> Just Left
-
-    indexRelativeRightCheck zipper (LeftIndex 3) --> Just Left
-
-    indexRelativeRightCheck zipper (LeftIndex 2) --> Just Selected
-
-    indexRelativeRightCheck zipper (LeftIndex 0) --> Just Selected
-
-    indexRelativeRightCheck zipper (RightIndex 0) --> Just Right
-
-    indexRelativeRightCheck zipper (RightIndex 2) --> Just Right
-
-    indexRelativeRightCheck zipper (RightIndex 3) --> Nothing
-
--}
-indexRelativeRightCheck : Zipper a -> RelativeIndex -> Maybe Position
-indexRelativeRightCheck zipper i =
-    indexAbsoluteCheck
-        zipper
-        (indexRelativeRightToAbsolute zipper i)
-
-
-{-|
-
-    zipper : Zipper Int
-    zipper = ( [ 0, 0, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ] )
-
     indexAbsoluteToRelativeLeft zipper 0 --> LeftIndex 2
 
     indexAbsoluteToRelativeLeft zipper 2 --> LeftIndex 0
@@ -1034,6 +403,19 @@ indexAbsoluteToRelativeLeft ( left, _, _ ) i =
 
     else
         RightIndex <| i - position
+
+
+{-| -}
+indexAbsoluteToRelativeLeftCheck : Zipper a -> Int -> Maybe RelativeIndex
+indexAbsoluteToRelativeLeftCheck zipper i =
+    indexAbsoluteToRelativeLeft zipper i
+        |> (\j ->
+                if indexRelativeLeftCheck zipper j == Nothing then
+                    Nothing
+
+                else
+                    Just j
+           )
 
 
 {-|
@@ -1068,19 +450,6 @@ indexAbsoluteToRelativeRight ( left, selection, _ ) i =
 
 
 {-| -}
-indexAbsoluteToRelativeLeftCheck : Zipper a -> Int -> Maybe RelativeIndex
-indexAbsoluteToRelativeLeftCheck zipper i =
-    indexAbsoluteToRelativeLeft zipper i
-        |> (\j ->
-                if indexRelativeLeftCheck zipper j == Nothing then
-                    Nothing
-
-                else
-                    Just j
-           )
-
-
-{-| -}
 indexAbsoluteToRelativeRightCheck : Zipper a -> Int -> Maybe RelativeIndex
 indexAbsoluteToRelativeRightCheck zipper i =
     indexAbsoluteToRelativeRight zipper i
@@ -1093,162 +462,120 @@ indexAbsoluteToRelativeRightCheck zipper i =
            )
 
 
-{-|
-
-    zipper : Zipper Int
-    zipper = ( [ 0, 0, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ] )
-
-    indexRelativeLeftToAbsolute zipper (LeftIndex 2) --> 0
-
-    indexRelativeLeftToAbsolute zipper (LeftIndex 0) --> 2
-
-    indexRelativeLeftToAbsolute zipper (RightIndex 0) --> 3
-
-    indexRelativeLeftToAbsolute zipper (RightIndex 2) --> 5
-
-    indexRelativeLeftToAbsolute zipper (RightIndex 3) --> 6
-
-    indexRelativeLeftToAbsolute zipper (RightIndex 5) --> 8
-
--}
-indexRelativeLeftToAbsolute : Zipper a -> RelativeIndex -> Int
-indexRelativeLeftToAbsolute ( left, _, _ ) i =
+{-| -}
+indexedFilter : IndexMethod -> (Position -> Int -> a -> Bool) -> Zipper a -> Zipper a
+indexedFilter indexMethod f (( left, selected, right ) as zipper) =
     let
-        position =
-            List.length left
+        indexes =
+            indexRangeFromMethod indexMethod zipper
     in
-    case i of
-        LeftIndex i_ ->
-            position - i_ - 1
+    ( List.map2 (\i elem -> ( f Left i elem, elem )) indexes.left left
+        |> List.filter Tuple.first
+        |> List.map Tuple.second
+    , List.map2 (\i elem -> ( f Selected i elem, elem )) indexes.selected selected
+        |> List.filter Tuple.first
+        |> List.map Tuple.second
+    , List.map2 (\i elem -> ( f Right i elem, elem )) indexes.right right
+        |> List.filter Tuple.first
+        |> List.map Tuple.second
+    )
 
-        RightIndex i_ ->
-            position + i_
 
-
-{-|
-
-    zipper : Zipper Int
-    zipper = ( [ 0, 0, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ] )
-
-    indexRelativeRightToAbsolute zipper (LeftIndex 5) --> 0
-
-    indexRelativeRightToAbsolute zipper (LeftIndex 3) --> 2
-
-    indexRelativeRightToAbsolute zipper (LeftIndex 2) --> 3
-
-    indexRelativeRightToAbsolute zipper (LeftIndex 0) --> 5
-
-    indexRelativeRightToAbsolute zipper (RightIndex 0) --> 6
-
-    indexRelativeRightToAbsolute zipper (RightIndex 2) --> 8
-
--}
-indexRelativeRightToAbsolute : Zipper a -> RelativeIndex -> Int
-indexRelativeRightToAbsolute ( left, selected, _ ) i =
+{-| -}
+indexedFilterLeft : IndexMethod -> (Position -> Int -> a -> Bool) -> Zipper a -> Zipper a
+indexedFilterLeft indexMethod f (( left, selected, right ) as zipper) =
     let
-        position =
-            List.length left + List.length selected
+        indexes =
+            indexRangeFromMethod indexMethod zipper
     in
-    case i of
-        LeftIndex i_ ->
-            position - i_ - 1
-
-        RightIndex i_ ->
-            position + i_
-
-
-{-| -}
-indexRelativeLeftToAbsoluteCheck : Zipper a -> RelativeIndex -> Maybe Int
-indexRelativeLeftToAbsoluteCheck zipper i =
-    indexRelativeLeftToAbsolute zipper i
-        |> (\j ->
-                if indexAbsoluteCheck zipper j == Nothing then
-                    Nothing
-
-                else
-                    Just j
-           )
+    ( List.map2 (\i elem -> ( f Left i elem, elem )) indexes.left left
+        |> List.filter Tuple.first
+        |> List.map Tuple.second
+    , selected
+    , right
+    )
 
 
 {-| -}
-indexRelativeRightToAbsoluteCheck : Zipper a -> RelativeIndex -> Maybe Int
-indexRelativeRightToAbsoluteCheck zipper i =
-    indexRelativeRightToAbsolute zipper i
-        |> (\j ->
-                if indexAbsoluteCheck zipper j == Nothing then
-                    Nothing
-
-                else
-                    Just j
-           )
-
-
-{-| -}
-relativeIndexLeftToPosDists : Zipper a -> RelativeIndex -> Maybe ( Position, Dists )
-relativeIndexLeftToPosDists zipper i =
-    absoluteIndexToPosDists
-        zipper
-        (indexRelativeLeftToAbsolute zipper i)
+indexedFilterRight : IndexMethod -> (Position -> Int -> a -> Bool) -> Zipper a -> Zipper a
+indexedFilterRight indexMethod f (( left, selected, right ) as zipper) =
+    let
+        indexes =
+            indexRangeFromMethod indexMethod zipper
+    in
+    ( left
+    , selected
+    , List.map2 (\i elem -> ( f Right i elem, elem )) indexes.right right
+        |> List.filter Tuple.first
+        |> List.map Tuple.second
+    )
 
 
 {-| -}
-relativeIndexRightToPosDists : Zipper a -> RelativeIndex -> Maybe ( Position, Dists )
-relativeIndexRightToPosDists zipper i =
-    absoluteIndexToPosDists
-        zipper
-        (indexRelativeRightToAbsolute zipper i)
+indexedFilterSelected : IndexMethod -> (Position -> Int -> a -> Bool) -> Zipper a -> Zipper a
+indexedFilterSelected indexMethod f (( left, selected, right ) as zipper) =
+    let
+        indexes =
+            indexRangeFromMethod indexMethod zipper
+    in
+    ( left
+    , List.map2 (\i elem -> ( f Selected i elem, elem )) indexes.selected selected
+        |> List.filter Tuple.first
+        |> List.map Tuple.second
+    , right
+    )
 
 
-{-|
+{-| -}
+indexedMap : IndexMethod -> (Position -> Int -> a -> b) -> Zipper a -> Zipper b
+indexedMap indexMethod f (( left, selected, right ) as zipper) =
+    let
+        indexes =
+            indexRangeFromMethod indexMethod zipper
+    in
+    ( List.map2 (\i elem -> f Left i elem) indexes.left left
+    , List.map2 (\i elem -> f Selected i elem) indexes.selected selected
+    , List.map2 (\i elem -> f Right i elem) indexes.right right
+    )
 
-    zipper : Zipper Int
-    zipper = fromTuple ([1,2,3],[4,5,6],[7,8,9])
 
-    absoluteIndexToPosDists zipper -1 --> Nothing
+{-| -}
+indexedMapLeft : IndexMethod -> (Position -> Int -> a -> a) -> Zipper a -> Zipper a
+indexedMapLeft indexMethod f (( left, selected, right ) as zipper) =
+    let
+        indexes =
+            indexRangeFromMethod indexMethod zipper
+    in
+    ( List.map2 (\i elem -> f Left i elem) indexes.left left
+    , selected
+    , right
+    )
 
-    absoluteIndexToPosDists zipper 0 --> Just (Left, {fromLeft=0,fromRight=2})
 
-    absoluteIndexToPosDists zipper 2 --> Just (Left, {fromLeft=2,fromRight=0})
+{-| -}
+indexedMapRight : IndexMethod -> (Position -> Int -> a -> a) -> Zipper a -> Zipper a
+indexedMapRight indexMethod f (( left, selected, right ) as zipper) =
+    let
+        indexes =
+            indexRangeFromMethod indexMethod zipper
+    in
+    ( left
+    , selected
+    , List.map2 (\i elem -> f Right i elem) indexes.right right
+    )
 
-    absoluteIndexToPosDists zipper 3 --> Just (Selected, {fromLeft=0,fromRight=2})
 
-    absoluteIndexToPosDists zipper 5 --> Just (Selected, {fromLeft=2,fromRight=0})
-
-    absoluteIndexToPosDists zipper 6 --> Just (Right, {fromLeft=0,fromRight=2})
-
-    absoluteIndexToPosDists zipper 8 --> Just (Right, {fromLeft=2,fromRight=0})
-
-    absoluteIndexToPosDists zipper 9 --> Nothing
-
--}
-absoluteIndexToPosDists : Zipper a -> Int -> Maybe ( Position, Dists )
-absoluteIndexToPosDists ( left, selected, right ) i =
-    if i >= 0 && i < length ( left, [], [] ) then
-        Just
-            ( Left
-            , { fromLeft = i
-              , fromRight = length ( left, [], [] ) - i - 1
-              }
-            )
-
-    else if i >= length ( left, [], [] ) && i < length ( left, selected, [] ) then
-        Just
-            ( Selected
-            , { fromLeft = i - length ( left, [], [] )
-              , fromRight = length ( left, selected, [] ) - i - 1
-              }
-            )
-
-    else if i >= length ( left, selected, [] ) && i < length ( left, selected, right ) then
-        Just
-            ( Right
-            , { fromLeft = i - length ( left, selected, [] )
-              , fromRight = length ( left, selected, right ) - i - 1
-              }
-            )
-
-    else
-        Nothing
+{-| -}
+indexedMapSelected : IndexMethod -> (Position -> Int -> a -> a) -> Zipper a -> Zipper a
+indexedMapSelected indexMethod f (( left, selected, right ) as zipper) =
+    let
+        indexes =
+            indexRangeFromMethod indexMethod zipper
+    in
+    ( left
+    , List.map2 (\i elem -> f Selected i elem) indexes.selected selected
+    , right
+    )
 
 
 indexRangeFromMethod :
@@ -1366,3 +693,676 @@ indexRanges ( left, selected, right ) =
                 |> List.map (\n -> n - List.length left - List.length selected + 1)
         }
     }
+
+
+{-|
+
+    zipper : Zipper Int
+    zipper = ( [ 0, 0, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ] )
+
+    indexRelativeLeftCheck zipper (LeftIndex 3) --> Nothing
+
+    indexRelativeLeftCheck zipper (LeftIndex 2) --> Just Left
+
+    indexRelativeLeftCheck zipper (LeftIndex 0) --> Just Left
+
+    indexRelativeLeftCheck zipper (RightIndex 0) --> Just Selected
+
+    indexRelativeLeftCheck zipper (RightIndex 2) --> Just Selected
+
+    indexRelativeLeftCheck zipper (RightIndex 3) --> Just Right
+
+    indexRelativeLeftCheck zipper (RightIndex 5) --> Just Right
+
+    indexRelativeLeftCheck zipper (RightIndex 6) --> Nothing
+
+-}
+indexRelativeLeftCheck : Zipper a -> RelativeIndex -> Maybe Position
+indexRelativeLeftCheck zipper i =
+    indexAbsoluteCheck
+        zipper
+        (indexRelativeLeftToAbsolute zipper i)
+
+
+{-|
+
+    zipper : Zipper Int
+    zipper = ( [ 0, 0, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ] )
+
+    indexRelativeLeftToAbsolute zipper (LeftIndex 2) --> 0
+
+    indexRelativeLeftToAbsolute zipper (LeftIndex 0) --> 2
+
+    indexRelativeLeftToAbsolute zipper (RightIndex 0) --> 3
+
+    indexRelativeLeftToAbsolute zipper (RightIndex 2) --> 5
+
+    indexRelativeLeftToAbsolute zipper (RightIndex 3) --> 6
+
+    indexRelativeLeftToAbsolute zipper (RightIndex 5) --> 8
+
+-}
+indexRelativeLeftToAbsolute : Zipper a -> RelativeIndex -> Int
+indexRelativeLeftToAbsolute ( left, _, _ ) i =
+    let
+        position =
+            List.length left
+    in
+    case i of
+        LeftIndex i_ ->
+            position - i_ - 1
+
+        RightIndex i_ ->
+            position + i_
+
+
+{-| -}
+indexRelativeLeftToAbsoluteCheck : Zipper a -> RelativeIndex -> Maybe Int
+indexRelativeLeftToAbsoluteCheck zipper i =
+    indexRelativeLeftToAbsolute zipper i
+        |> (\j ->
+                if indexAbsoluteCheck zipper j == Nothing then
+                    Nothing
+
+                else
+                    Just j
+           )
+
+
+{-|
+
+    zipper : Zipper Int
+    zipper = ( [ 0, 0, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ] )
+
+    indexRelativeRightCheck zipper (LeftIndex 6) --> Nothing
+
+    indexRelativeRightCheck zipper (LeftIndex 5) --> Just Left
+
+    indexRelativeRightCheck zipper (LeftIndex 3) --> Just Left
+
+    indexRelativeRightCheck zipper (LeftIndex 2) --> Just Selected
+
+    indexRelativeRightCheck zipper (LeftIndex 0) --> Just Selected
+
+    indexRelativeRightCheck zipper (RightIndex 0) --> Just Right
+
+    indexRelativeRightCheck zipper (RightIndex 2) --> Just Right
+
+    indexRelativeRightCheck zipper (RightIndex 3) --> Nothing
+
+-}
+indexRelativeRightCheck : Zipper a -> RelativeIndex -> Maybe Position
+indexRelativeRightCheck zipper i =
+    indexAbsoluteCheck
+        zipper
+        (indexRelativeRightToAbsolute zipper i)
+
+
+{-|
+
+    zipper : Zipper Int
+    zipper = ( [ 0, 0, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ] )
+
+    indexRelativeRightToAbsolute zipper (LeftIndex 5) --> 0
+
+    indexRelativeRightToAbsolute zipper (LeftIndex 3) --> 2
+
+    indexRelativeRightToAbsolute zipper (LeftIndex 2) --> 3
+
+    indexRelativeRightToAbsolute zipper (LeftIndex 0) --> 5
+
+    indexRelativeRightToAbsolute zipper (RightIndex 0) --> 6
+
+    indexRelativeRightToAbsolute zipper (RightIndex 2) --> 8
+
+-}
+indexRelativeRightToAbsolute : Zipper a -> RelativeIndex -> Int
+indexRelativeRightToAbsolute ( left, selected, _ ) i =
+    let
+        position =
+            List.length left + List.length selected
+    in
+    case i of
+        LeftIndex i_ ->
+            position - i_ - 1
+
+        RightIndex i_ ->
+            position + i_
+
+
+{-| -}
+indexRelativeRightToAbsoluteCheck : Zipper a -> RelativeIndex -> Maybe Int
+indexRelativeRightToAbsoluteCheck zipper i =
+    indexRelativeRightToAbsolute zipper i
+        |> (\j ->
+                if indexAbsoluteCheck zipper j == Nothing then
+                    Nothing
+
+                else
+                    Just j
+           )
+
+
+{-| -}
+insertFirst : a -> Zipper a -> Zipper a
+insertFirst elem ( left, selected, right ) =
+    ( left ++ [ elem ], selected, right )
+
+
+{-| -}
+insertLast : a -> Zipper a -> Zipper a
+insertLast elem ( left, selected, right ) =
+    ( left, selected, right ++ [ elem ] )
+
+
+{-| -}
+insertLeftOfLeftSplit : a -> Zipper a -> Zipper a
+insertLeftOfLeftSplit elem ( left, selected, right ) =
+    ( [ elem ] ++ left, selected, right )
+
+
+{-| -}
+insertLeftOfRightSplit : a -> Zipper a -> Zipper a
+insertLeftOfRightSplit elem ( left, selected, right ) =
+    ( left, selected ++ [ elem ], right )
+
+
+{-| -}
+insertRightOfLeftSplit : a -> Zipper a -> Zipper a
+insertRightOfLeftSplit elem ( left, selected, right ) =
+    ( left, [ elem ] ++ selected, right )
+
+
+{-| -}
+insertRightOfRightSplit : a -> Zipper a -> Zipper a
+insertRightOfRightSplit elem ( left, selected, right ) =
+    ( left, selected, [ elem ] ++ right )
+
+
+{-| -}
+length : Zipper a -> Int
+length ( left, selected, right ) =
+    List.length left + List.length selected + List.length right
+
+
+{-| -}
+lengthLeft : Zipper a -> Int
+lengthLeft ( left, _, _ ) =
+    List.length left
+
+
+{-| -}
+lengthRight : Zipper a -> Int
+lengthRight ( _, _, right ) =
+    List.length right
+
+
+{-| -}
+lengthSelected : Zipper a -> Int
+lengthSelected ( _, selected, _ ) =
+    List.length selected
+
+
+{-| -}
+map : (a -> b) -> Zipper a -> Zipper b
+map f ( left, selected, right ) =
+    ( List.map f left
+    , List.map f selected
+    , List.map f right
+    )
+
+
+{-| -}
+mapLeft : (a -> a) -> Zipper a -> Zipper a
+mapLeft f ( left, selected, right ) =
+    ( List.map f left, selected, right )
+
+
+{-| -}
+mapRight : (a -> a) -> Zipper a -> Zipper a
+mapRight f ( left, selected, right ) =
+    ( left, selected, List.map f right )
+
+
+{-| -}
+mapSelected : (a -> a) -> Zipper a -> Zipper a
+mapSelected f ( left, selected, right ) =
+    ( left, List.map f selected, right )
+
+
+{-| -}
+mapSeparately : (a -> b) -> (a -> b) -> (a -> b) -> Zipper a -> Zipper b
+mapSeparately fLeft fSelected fRight ( left, selected, right ) =
+    ( List.map fLeft left
+    , List.map fSelected selected
+    , List.map fRight right
+    )
+
+
+{-| -}
+moveBothToFirst : Zipper a -> Zipper a
+moveBothToFirst zipper =
+    fromTuple ( toList zipper, [], [] )
+
+
+{-| -}
+moveBothToLast : Zipper a -> Zipper a
+moveBothToLast zipper =
+    fromTuple ( [], [], toList zipper )
+
+
+{-| -}
+moveLeftToFirst : Zipper a -> Zipper a
+moveLeftToFirst zipper =
+    fromTuple ( toList zipper, [], [] )
+
+
+{-| Attempt to move left edge of selection to left
+
+    fromTuple ( [ 1, 2 ], [ 3, 4 ], [ 5, 6 ] )
+        |> moveLeftToLeft
+        --> Ok (fromTuple ( [ 1 ], [ 2, 3, 4 ], [ 5, 6 ] ))
+
+    fromTuple ( [], [ 3, 4 ], [ 5, 6 ] )
+        |> moveLeftToLeft
+        --> Err (fromTuple ( [], [ 3, 4 ], [ 5, 6 ] ))
+
+-}
+moveLeftToLeft : Zipper a -> Maybe (Zipper a)
+moveLeftToLeft zipper =
+    Adv.moveLeftToLeft identity zipper
+
+
+{-| -}
+moveLeftToLeftUntil : (List a -> List a -> List a -> Bool) -> Zipper a -> Maybe (Zipper a)
+moveLeftToLeftUntil f zipper =
+    Adv.moveLeftToLeftUntil identity f zipper
+
+
+{-| -}
+moveLeftToRight : Zipper a -> Zipper a
+moveLeftToRight zipper =
+    zipper
+
+
+{-| -}
+moveLeftToRightUntil : (List a -> List a -> List a -> Bool) -> Zipper a -> Maybe (Zipper a)
+moveLeftToRightUntil f zipper =
+    Adv.moveLeftToRightUntil identity f zipper
+
+
+{-| -}
+moveRightToLast : Zipper a -> Zipper a
+moveRightToLast zipper =
+    fromTuple ( [], [], toList zipper )
+
+
+{-| -}
+moveRightToLeft : Zipper a -> Zipper a
+moveRightToLeft zipper =
+    zipper
+
+
+{-| -}
+moveRightToLeftUntil : (List a -> List a -> List a -> Bool) -> Zipper a -> Maybe (Zipper a)
+moveRightToLeftUntil f zipper =
+    Adv.moveRightToLeftUntil identity f zipper
+
+
+{-| -}
+moveRightToRight : Zipper a -> Zipper a
+moveRightToRight zipper =
+    zipper
+
+
+{-| -}
+moveRightToRightUntil : (List a -> List a -> List a -> Bool) -> Zipper a -> Maybe (Zipper a)
+moveRightToRightUntil f zipper =
+    Adv.moveRightToRightUntil identity f zipper
+
+
+{-| -}
+moveToN : Int -> Int -> Zipper a -> Maybe (Zipper a)
+moveToN i j zipper =
+    Nothing
+
+
+{-| -}
+positionLeft : Zipper a -> Int
+positionLeft ( left, _, _ ) =
+    List.length left
+
+
+{-| -}
+positionLeftFromEnd : Zipper a -> Int
+positionLeftFromEnd ( _, selected, right ) =
+    List.length selected + List.length right
+
+
+{-| -}
+positionRight : Zipper a -> Int
+positionRight ( left, selected, _ ) =
+    List.length left + List.length selected
+
+
+{-| -}
+positionRightFromEnd : Zipper a -> Int
+positionRightFromEnd ( _, _, right ) =
+    List.length right
+
+
+{-| -}
+reverse : Zipper a -> Zipper a
+reverse ( left, selected, right ) =
+    ( List.reverse right, selected, List.reverse left )
+
+
+{-| -}
+reverseLeft : Zipper a -> Zipper a
+reverseLeft ( left, selected, right ) =
+    ( List.reverse left, selected, right )
+
+
+{-| -}
+reverseRight : Zipper a -> Zipper a
+reverseRight ( left, selected, right ) =
+    ( left, selected, List.reverse right )
+
+
+{-| -}
+reverseSelected : Zipper a -> Zipper a
+reverseSelected ( left, selected, right ) =
+    ( left, List.reverse selected, right )
+
+
+{-| -}
+relativeIndexLeftToPosDists : Zipper a -> RelativeIndex -> Maybe ( Position, Dists )
+relativeIndexLeftToPosDists zipper i =
+    absoluteIndexToPosDists
+        zipper
+        (indexRelativeLeftToAbsolute zipper i)
+
+
+{-| -}
+relativeIndexRightToPosDists : Zipper a -> RelativeIndex -> Maybe ( Position, Dists )
+relativeIndexRightToPosDists zipper i =
+    absoluteIndexToPosDists
+        zipper
+        (indexRelativeRightToAbsolute zipper i)
+
+
+{-| -}
+setAt : Int -> a -> Zipper a -> Maybe (Zipper a)
+setAt i elem (( left, selected, right ) as zipper) =
+    case absoluteIndexToPosDists zipper i of
+        Just ( Left, { fromRight } ) ->
+            Just
+                ( List.Extra.setAt fromRight elem left
+                , selected
+                , right
+                )
+
+        Just ( Selected, { fromLeft } ) ->
+            Just
+                ( left
+                , List.Extra.setAt fromLeft elem selected
+                , right
+                )
+
+        Just ( Right, { fromLeft } ) ->
+            Just
+                ( left
+                , selected
+                , List.Extra.setAt fromLeft elem right
+                )
+
+        Nothing ->
+            Nothing
+
+
+{-| -}
+setAtRelativeLeft : RelativeIndex -> a -> Zipper a -> Maybe (Zipper a)
+setAtRelativeLeft i elem zipper =
+    setAt (indexRelativeLeftToAbsolute zipper i) elem zipper
+
+
+{-| -}
+setAtRelativeRight : RelativeIndex -> a -> Zipper a -> Maybe (Zipper a)
+setAtRelativeRight i elem zipper =
+    setAt (indexRelativeRightToAbsolute zipper i) elem zipper
+
+
+{-| -}
+setLeft : List a -> Zipper a -> Zipper a
+setLeft left ( _, selected, right ) =
+    ( List.reverse left, selected, right )
+
+
+{-| -}
+setRight : List a -> Zipper a -> Zipper a
+setRight right ( left, selected, _ ) =
+    ( left, selected, right )
+
+
+{-| -}
+setSelected : List a -> Zipper a -> Zipper a
+setSelected selected ( left, _, right ) =
+    ( left, selected, right )
+
+
+{-| -}
+sortByKeepIndexes : (a -> comparable) -> Zipper a -> Zipper a
+sortByKeepIndexes f zipper =
+    zipper
+        |> moveBothToFirst
+        |> updateRight (List.sortBy f)
+        |> moveToN (positionLeft zipper) (positionRight zipper)
+        |> Maybe.withDefault zipper
+
+
+{-| -}
+sortKeepIndexes : Zipper comparable -> Zipper comparable
+sortKeepIndexes zipper =
+    zipper
+        |> moveBothToFirst
+        |> updateRight List.sort
+        |> moveToN (positionLeft zipper) (positionRight zipper)
+        |> Maybe.withDefault zipper
+
+
+{-| -}
+sortWithKeepIndexes : (a -> a -> Order) -> Zipper a -> Zipper a
+sortWithKeepIndexes f zipper =
+    zipper
+        |> moveBothToFirst
+        |> updateRight (List.sortWith f)
+        |> moveToN (positionLeft zipper) (positionRight zipper)
+        |> Maybe.withDefault zipper
+
+
+{-| -}
+swap : Zipper a -> Zipper a
+swap zipper =
+    zipper
+
+
+{-| -}
+toList : Zipper a -> List a
+toList ( left, selected, right ) =
+    List.reverse left ++ selected ++ right
+
+
+{-| -}
+toTuple : Zipper a -> ( List a, List a, List a )
+toTuple ( left, selected, right ) =
+    ( List.reverse left, selected, right )
+
+
+{-| -}
+toZipperListElemList : (List a -> a) -> Zipper a -> ( List a, a, List a )
+toZipperListElemList f ( left, selected, right ) =
+    ( left, f selected, right )
+
+
+{-| -}
+toZipperListList : Zipper a -> ( List a, List a )
+toZipperListList ( left, _, right ) =
+    ( left, right )
+
+
+{-| -}
+tryMoveLeftToLeft : Zipper a -> Zipper a
+tryMoveLeftToLeft zipper =
+    zipper
+
+
+{-| -}
+tryMoveLeftToRight : Zipper a -> Zipper a
+tryMoveLeftToRight zipper =
+    zipper
+
+
+{-| -}
+tryMoveRightToLeft : Zipper a -> Zipper a
+tryMoveRightToLeft zipper =
+    zipper
+
+
+{-| -}
+tryMoveRightToRight : Zipper a -> Zipper a
+tryMoveRightToRight zipper =
+    zipper
+
+
+{-| -}
+tryMoveToN : Int -> Int -> Zipper a -> Zipper a
+tryMoveToN i j zipper =
+    moveToN i j zipper
+        |> Maybe.withDefault zipper
+
+
+{-| -}
+trySetAt : Int -> a -> Zipper a -> Zipper a
+trySetAt i elem zipper =
+    setAt i elem zipper
+        |> Maybe.withDefault zipper
+
+
+{-| -}
+trySetAtRelativeLeft : RelativeIndex -> a -> Zipper a -> Zipper a
+trySetAtRelativeLeft i elem zipper =
+    setAtRelativeLeft i elem zipper
+        |> Maybe.withDefault zipper
+
+
+{-| -}
+trySetAtRelativeRight : RelativeIndex -> a -> Zipper a -> Zipper a
+trySetAtRelativeRight i elem zipper =
+    setAtRelativeRight i elem zipper
+        |> Maybe.withDefault zipper
+
+
+{-| -}
+tryUpdateAt : Int -> (a -> a) -> Zipper a -> Zipper a
+tryUpdateAt i f zipper =
+    updateAt i f zipper
+        |> Maybe.withDefault zipper
+
+
+{-| -}
+tryUpdateAtRelativeLeft : RelativeIndex -> (a -> a) -> Zipper a -> Zipper a
+tryUpdateAtRelativeLeft i f zipper =
+    updateAtRelativeLeft i f zipper
+        |> Maybe.withDefault zipper
+
+
+{-| -}
+tryUpdateAtRelativeRight : RelativeIndex -> (a -> a) -> Zipper a -> Zipper a
+tryUpdateAtRelativeRight i f zipper =
+    updateAtRelativeRight i f zipper
+        |> Maybe.withDefault zipper
+
+
+{-| -}
+update : (List a -> List b) -> Zipper a -> Zipper b
+update f ( left, selected, right ) =
+    ( left |> List.reverse |> f |> List.reverse, f selected, f right )
+
+
+{-| -}
+updateLeft : (List a -> List a) -> Zipper a -> Zipper a
+updateLeft fLeft ( left, selected, right ) =
+    ( left |> List.reverse |> fLeft |> List.reverse, selected, right )
+
+
+{-| -}
+updateRight : (List a -> List a) -> Zipper a -> Zipper a
+updateRight fRight ( left, selected, right ) =
+    ( left, selected, fRight right )
+
+
+{-| -}
+updateSelected : (List a -> List a) -> Zipper a -> Zipper a
+updateSelected fSelected ( left, selected, right ) =
+    ( left, fSelected selected, right )
+
+
+{-| -}
+updateSeparately : (List a -> List b) -> (List a -> List b) -> (List a -> List b) -> Zipper a -> Zipper b
+updateSeparately fLeft fSelected fRight ( left, selected, right ) =
+    ( left |> List.reverse |> fLeft |> List.reverse, fSelected selected, fRight right )
+
+
+{-|
+
+    zipper : Zipper Int
+    zipper = fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+
+    updateAt 2 ((+) 10) zipper
+        --> Just (fromTuple ( [ 1, 2, 13 ], [ 4, 5, 6 ], [ 7, 8, 9 ] ))
+
+    updateAt 5 ((+) 10) zipper
+        --> Just (fromTuple ( [ 1, 2, 3 ], [ 4, 5, 16 ], [ 7, 8, 9 ] ))
+
+    updateAt 9 ((+) 10) zipper
+        --> Nothing
+
+-}
+updateAt : Int -> (a -> a) -> Zipper a -> Maybe (Zipper a)
+updateAt i f (( left, selected, right ) as zipper) =
+    case absoluteIndexToPosDists zipper i of
+        Just ( Left, { fromRight } ) ->
+            Just
+                ( List.Extra.updateAt fromRight f left
+                , selected
+                , right
+                )
+
+        Just ( Selected, { fromLeft } ) ->
+            Just
+                ( left
+                , List.Extra.updateAt fromLeft f selected
+                , right
+                )
+
+        Just ( Right, { fromLeft } ) ->
+            Just
+                ( left
+                , selected
+                , List.Extra.updateAt fromLeft f right
+                )
+
+        Nothing ->
+            Nothing
+
+
+{-| -}
+updateAtRelativeLeft : RelativeIndex -> (a -> a) -> Zipper a -> Maybe (Zipper a)
+updateAtRelativeLeft i f zipper =
+    updateAt (indexRelativeLeftToAbsolute zipper i) f zipper
+
+
+{-| -}
+updateAtRelativeRight : RelativeIndex -> (a -> a) -> Zipper a -> Maybe (Zipper a)
+updateAtRelativeRight i f zipper =
+    updateAt (indexRelativeRightToAbsolute zipper i) f zipper
