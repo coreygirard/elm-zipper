@@ -1,5 +1,5 @@
 module Zipper.ListListList exposing
-    ( Zipper, RelativeIndex(..), Dists, Position, Section(..)
+    ( Zipper, RelativeIndex(..), Position, Section(..)
     , empty, fromTuple, fromZipperListList, fromZipperListElemList
     , toTuple, toList, toZipperListList, toZipperListElemList
     , length, positionLeft, positionRight
@@ -25,7 +25,7 @@ If you're working with Chars, check out [`Zipper.StringStringString`](Zipper.Str
 
 # Definition
 
-@docs Zipper, RelativeIndex, Dists, Position, Indexes, Section
+@docs Zipper, RelativeIndex, Position, Indexes, Section
 
 
 # Create
@@ -99,11 +99,6 @@ If you're working with Chars, check out [`Zipper.StringStringString`](Zipper.Str
 
 import List.Extra
 import Zipper.ListListList.Advanced as Adv
-
-
-{-| -}
-type alias Dists =
-    { fromLeft : Int, fromRight : Int }
 
 
 {-| -}
