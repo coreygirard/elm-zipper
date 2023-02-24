@@ -133,14 +133,21 @@ type alias Dists =
     { fromLeft : Int, fromRight : Int }
 
 
-{-| -}
+{-|
+
+    absoluteIndexToPosDists
+        (fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ] ))
+        2
+        --> Just ( Left, { fromLeft = 2, fromRight = 0 } )
+
+-}
 absoluteIndexToPosDists : Zipper a -> Int -> Maybe ( Position, Dists )
 absoluteIndexToPosDists ( left, right ) i =
     if i >= 0 && i < length ( left, [] ) then
         Just
             ( Left
             , { fromLeft = i
-              , fromRight = length ( left, [] ) - i
+              , fromRight = length ( left, [] ) - i - 1
               }
             )
 
@@ -148,7 +155,7 @@ absoluteIndexToPosDists ( left, right ) i =
         Just
             ( Right
             , { fromLeft = i - length ( left, [] )
-              , fromRight = length ( left, right ) - i
+              , fromRight = length ( left, right ) - i - 1
               }
             )
 
@@ -181,7 +188,7 @@ filter f ( left, right ) =
 {-| -}
 fromListAndIndex : Int -> List a -> Maybe (Zipper a)
 fromListAndIndex i elems =
-    if i >= 0 && i < List.length elems then
+    if i >= 0 && i <= List.length elems then
         Just <| List.Extra.splitAt i elems
 
     else
@@ -338,7 +345,13 @@ indexAbsoluteToRelativeCheck zipper i =
            )
 
 
-{-| -}
+{-|
+
+    fromTuple ( [ 1, 0 ], [ 4, 2, 1, 7, 8 ] )
+        |> indexedFilter FromFirst (\_ i val -> val > i)
+        --> fromTuple ( [ 1 ], [ 4, 7, 8 ] )
+
+-}
 indexedFilter : IndexMethod -> (Position -> Int -> a -> Bool) -> Zipper a -> Zipper a
 indexedFilter indexMethod f (( left, right ) as zipper) =
     let
@@ -568,25 +581,49 @@ indexRelativeToAbsoluteCheck zipper i =
            )
 
 
-{-| -}
+{-|
+
+    fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ] )
+        |> insertFirst 0
+        --> fromTuple ( [ 0, 1, 2, 3 ], [ 4, 5, 6 ] )
+
+-}
 insertFirst : a -> Zipper a -> Zipper a
 insertFirst elem ( left, right ) =
     ( left ++ [ elem ], right )
 
 
-{-| -}
+{-|
+
+    fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ] )
+        |> insertLast 0
+        --> fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6, 0 ] )
+
+-}
 insertLast : a -> Zipper a -> Zipper a
 insertLast elem ( left, right ) =
     ( left, right ++ [ elem ] )
 
 
-{-| -}
+{-|
+
+    fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ] )
+        |> insertLeftOfSplit 0
+        --> fromTuple ( [ 1, 2, 3, 0 ], [ 4, 5, 6 ] )
+
+-}
 insertLeftOfSplit : a -> Zipper a -> Zipper a
 insertLeftOfSplit elem ( left, right ) =
     ( elem :: left, right )
 
 
-{-| -}
+{-|
+
+    fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ] )
+        |> insertRightOfSplit 0
+        --> fromTuple ( [ 1, 2, 3 ], [ 0, 4, 5, 6 ] )
+
+-}
 insertRightOfSplit : a -> Zipper a -> Zipper a
 insertRightOfSplit elem ( left, right ) =
     ( left, elem :: right )
@@ -616,7 +653,17 @@ map f ( left, right ) =
     ( List.map f left, List.map f right )
 
 
-{-| -}
+{-|
+
+    fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ] )
+        |> moveLeft
+        --> Just (fromTuple ( [ 1, 2 ], [ 3, 4, 5, 6 ] ))
+
+    fromTuple ( [], [ 4, 5, 6 ] )
+        |> moveLeft
+        --> Nothing
+
+-}
 moveLeft : Zipper a -> Maybe (Zipper a)
 moveLeft ( left, right ) =
     case left of
@@ -627,7 +674,17 @@ moveLeft ( left, right ) =
             Nothing
 
 
-{-| -}
+{-|
+
+    fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ] )
+        |> moveRight
+        --> Just (fromTuple ( [ 1, 2, 3, 4 ], [ 5, 6 ] ))
+
+    fromTuple ( [ 1, 2, 3 ], [] )
+        |> moveRight
+        --> Nothing
+
+-}
 moveRight : Zipper a -> Maybe (Zipper a)
 moveRight ( left, right ) =
     case right of
@@ -638,18 +695,28 @@ moveRight ( left, right ) =
             Nothing
 
 
-{-| Set selection to first element
+{-|
+
+    fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ] )
+        |> moveToFirst
+        --> fromTuple ( [], [ 1, 2, 3, 4, 5, 6 ] )
+
 -}
 moveToFirst : Zipper a -> Zipper a
 moveToFirst zipper =
-    fromTuple ( toList zipper, [] )
+    fromTuple ( [], toList zipper )
 
 
-{-| Set selection to last element
+{-|
+
+    fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ] )
+        |> moveToLast
+        --> fromTuple ( [ 1, 2, 3, 4, 5, 6 ], [] )
+
 -}
 moveToLast : Zipper a -> Zipper a
 moveToLast zipper =
-    fromTuple ( [], toList zipper )
+    fromTuple ( toList zipper, [] )
 
 
 {-|
@@ -664,13 +731,26 @@ position ( left, _ ) =
     List.length left
 
 
-{-| -}
+{-|
+
+    fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ] )
+        |> reverse
+        --> fromTuple ( [ 6, 5, 4 ], [ 3, 2, 1 ] )
+
+-}
 reverse : Zipper a -> Zipper a
 reverse ( left, right ) =
-    ( List.reverse right, List.reverse left )
+    ( right, left )
 
 
-{-| -}
+{-|
+
+    relativeIndexToPosDists
+        (fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ] ))
+        (LeftIndex 0)
+        --> Just ( Left, { fromLeft = 2, fromRight = 0 } )
+
+-}
 relativeIndexToPosDists : Zipper a -> RelativeIndex -> Maybe ( Position, Dists )
 relativeIndexToPosDists zipper i =
     absoluteIndexToPosDists
@@ -702,7 +782,13 @@ setRight right ( left, _ ) =
     ( left, right )
 
 
-{-| -}
+{-|
+
+    fromTuple ( [ 1, 4, 2 ], [ 2, 3 ] )
+        |> sortKeepIndex
+        --> fromTuple ( [ 1, 2, 2 ], [ 3, 4 ] )
+
+-}
 sortKeepIndex : Zipper comparable -> Zipper comparable
 sortKeepIndex zipper =
     zipper
@@ -761,7 +847,17 @@ toZipperListListList selection ( left, right ) =
     ( left, selection, right )
 
 
-{-| -}
+{-|
+
+    fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ] )
+        |> tryMoveLeft
+        --> fromTuple ( [ 1, 2 ], [ 3, 4, 5, 6 ] )
+
+    fromTuple ( [], [ 4, 5, 6 ] )
+        |> tryMoveLeft
+        --> fromTuple ( [], [ 4, 5, 6 ] )
+
+-}
 tryMoveLeft : Zipper a -> Zipper a
 tryMoveLeft zipper =
     zipper
@@ -769,7 +865,17 @@ tryMoveLeft zipper =
         |> Maybe.withDefault zipper
 
 
-{-| -}
+{-|
+
+    fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ] )
+        |> tryMoveRight
+        --> fromTuple ( [ 1, 2, 3, 4 ], [ 5, 6 ] )
+
+    fromTuple ( [ 1, 2, 3 ], [] )
+        |> tryMoveRight
+        --> fromTuple ( [ 1, 2, 3 ], [] )
+
+-}
 tryMoveRight : Zipper a -> Zipper a
 tryMoveRight zipper =
     zipper

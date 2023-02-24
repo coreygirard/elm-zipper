@@ -581,6 +581,15 @@ moveRightUntil f zipper =
 
 
 {-| Set selection to Nth element
+
+    fromTuple ( [ 1, 2, 3 ], 4, [ 5, 6, 7 ] )
+        |> moveToIndex 5
+        --> Just (fromTuple ( [ 1, 2, 3, 4, 5 ], 6, [ 7 ] ))
+
+    fromTuple ( [ 1, 2, 3 ], 4, [ 5, 6, 7 ] )
+        |> moveToIndex 10
+        --> Nothing
+
 -}
 moveToIndex : Int -> Zipper a -> Maybe (Zipper a)
 moveToIndex i ( before, selected, after ) =

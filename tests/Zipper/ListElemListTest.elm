@@ -48,7 +48,7 @@ suite =
                 \_ ->
                     [ 1, 2, 3, 4, 5, 6, 7 ]
                         |> Zipper.ListElemList.fromListAndIndex 3
-                        |> Expect.equal (Just ( [ 1, 2, 3 ], 4, [ 5, 6, 7 ] ))
+                        |> Expect.equal (Just (fromTuple ( [ 1, 2, 3 ], 4, [ 5, 6, 7 ] )))
             , test "handles invalid input" <|
                 \_ ->
                     [ 1, 2 ]
