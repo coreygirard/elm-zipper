@@ -1,18 +1,18 @@
 module Zipper.ListList exposing
-    ( Zipper, RelativeIndex(..), Section(..)
+    ( Zipper, RelativeIndex(..), Section(..), Position
     , empty, fromTuple, fromListAndIndex, fromZipperListElemList, fromZipperListListList
     , toTuple, toList, toZipperListElemList, toZipperListListList
     , length, position
     , getLeft, getRight
     , setLeft, setRight
-    , map, Position, indexedMap
+    , map, indexedMap
     , update
     , filter, indexedFilter
     , moveLeft, tryMoveLeft, moveRight, tryMoveRight, moveToFirst, moveToLast
     , insertFirst, insertLast, insertLeftOfSplit, insertRightOfSplit
     , sortKeepIndex
     , reverse
-    , calcIndex, calcIndexes
+    , calcIndex, calcIndexes, indexRelativeToAbsolute
     )
 
 {-| A library for a template type.
@@ -25,7 +25,7 @@ If you're working with Chars, check out [`Zipper.StringString`](Zipper.StringStr
 
 # Definition
 
-@docs Zipper, RelativeIndex, Section
+@docs Zipper, RelativeIndex, Section, Position
 
 
 # Create
@@ -55,7 +55,7 @@ If you're working with Chars, check out [`Zipper.StringString`](Zipper.StringStr
 
 # Map
 
-@docs map, IndexMethod, Position, indexedMap
+@docs map, indexedMap
 
 
 # Update
@@ -93,7 +93,7 @@ If you're working with Chars, check out [`Zipper.StringString`](Zipper.StringStr
 
 # Indexes
 
-@docs calcIndex, calcIndexes
+@docs calcIndex, calcIndexes, indexRelativeToAbsolute
 
 -}
 
@@ -339,6 +339,38 @@ indexedMap f (( left, right ) as zipper) =
     ( List.map2 f (List.reverse indexes.left) left
     , List.map2 f indexes.right right
     )
+
+
+{-|
+
+    zipper : Zipper Int
+    zipper = ( [ 0, 0, 0 ], [ 0, 0, 0 ] )
+
+    indexRelativeToAbsolute zipper (LeftIndex 3) --> -1
+
+    indexRelativeToAbsolute zipper (LeftIndex 2) --> 0
+
+    indexRelativeToAbsolute zipper (LeftIndex 0) --> 2
+
+    indexRelativeToAbsolute zipper (RightIndex 0) --> 3
+
+    indexRelativeToAbsolute zipper (RightIndex 2) --> 5
+
+    indexRelativeToAbsolute zipper (RightIndex 3) --> 6
+
+-}
+indexRelativeToAbsolute : Zipper a -> RelativeIndex -> Int
+indexRelativeToAbsolute ( left, _ ) i =
+    let
+        position_ =
+            List.length left
+    in
+    case i of
+        LeftIndex i_ ->
+            position_ - i_ - 1
+
+        RightIndex i_ ->
+            position_ + i_
 
 
 {-|

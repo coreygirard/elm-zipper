@@ -2,11 +2,10 @@ module Zipper.ListList.Extra exposing
     ( lengthLeft, lengthRight, positionFromEnd
     , getAt, getAtRelative
     , setAt, trySetAt, setAtRelative, trySetAtRelative
-    , mapSeparately, mapLeft, mapRight, indexedMapLeft, indexedMapRight
+    , mapSeparately, mapLeft, mapRight, indexedMapSeparately, indexedMapLeft, indexedMapRight
     , updateSeparately, updateLeft, updateRight, updateAt, tryUpdateAt, updateAtRelative, tryUpdateAtRelative
     , filterSeparately, filterLeft, filterRight, indexedFilterLeft, indexedFilterRight
     , moveLeftUntil, moveRightUntil, moveToN, tryMoveToN
-    , insertFirst, insertLast, insertLeftOfSplit, insertRightOfSplit
     , sortByKeepIndex, sortWithKeepIndex
     , reverseLeft, reverseRight
     , swap, trySwap
@@ -46,7 +45,7 @@ If you're working with Chars, check out [`Zipper.StringString`](Zipper.StringStr
 
 # Map
 
-@docs mapSeparately, mapLeft, mapRight, indexedMapLeft, indexedMapRight
+@docs mapSeparately, mapLeft, mapRight, indexedMapSeparately, indexedMapLeft, indexedMapRight
 
 
 # Update
@@ -66,8 +65,6 @@ If you're working with Chars, check out [`Zipper.StringString`](Zipper.StringStr
 
 # Insert
 
-@docs insertFirst, insertLast, insertLeftOfSplit, insertRightOfSplit
-
 
 # Sort
 
@@ -85,8 +82,6 @@ If you're working with Chars, check out [`Zipper.StringString`](Zipper.StringStr
 
 
 # Indexes
-
-@docs indexRelativeCheck, indexAbsoluteToRelative, indexAbsoluteToRelativeCheck, indexRelativeToAbsolute, indexRelativeToAbsoluteCheck, absoluteIndexToPosDists, relativeIndexToPosDists, indexRanges
 
 -}
 
@@ -241,58 +236,32 @@ indexedMapRight f (( left, right ) as zipper) =
 
 {-|
 
-    zipper : Zipper Int
-    zipper = ( [ 0, 0, 0 ], [ 0, 0, 0 ] )
+    fromTuple ( [ 0, 0 ], [ 0, 0, 0, 0 ] )
+        |> indexedMap (\{first} _ -> first)
+        --> fromTuple ( [ 0, 1 ], [ 2, 3, 4, 5 ] )
 
-    indexRelativeToAbsolute zipper (LeftIndex 3) --> -1
+    fromTuple ( [ 0, 0 ], [ 0, 0, 0, 0 ] )
+        |> indexedMap (\{last} _ -> last)
+        --> fromTuple ( [ 5, 4 ], [ 3, 2, 1, 0 ] )
 
-    indexRelativeToAbsolute zipper (LeftIndex 2) --> 0
+    fromTuple ( [ 0, 0 ], [ 0, 0, 0, 0 ] )
+        |> indexedMap (\{leftEdge} _ -> leftEdge)
+        --> fromTuple ( [ 0, 1 ], [ 0, 1, 2, 3 ] )
 
-    indexRelativeToAbsolute zipper (LeftIndex 0) --> 2
-
-    indexRelativeToAbsolute zipper (RightIndex 0) --> 3
-
-    indexRelativeToAbsolute zipper (RightIndex 2) --> 5
-
-    indexRelativeToAbsolute zipper (RightIndex 3) --> 6
+    fromTuple ( [ 0, 0 ], [ 0, 0, 0, 0 ] )
+        |> indexedMap (\{rightEdge} _ -> rightEdge)
+        --> fromTuple ( [ 1, 0 ], [ 3, 2, 1, 0 ] )
 
 -}
-indexRelativeToAbsolute : Zipper a -> RelativeIndex -> Int
-indexRelativeToAbsolute ( left, _ ) i =
+indexedMapSeparately : (Position -> a -> b) -> (Position -> a -> b) -> Zipper a -> Zipper b
+indexedMapSeparately fLeft fRight (( left, right ) as zipper) =
     let
-        position_ =
-            List.length left
+        indexes =
+            calcIndexes zipper
     in
-    case i of
-        LeftIndex i_ ->
-            position_ - i_ - 1
-
-        RightIndex i_ ->
-            position_ + i_
-
-
-{-| -}
-insertFirst : a -> Zipper a -> Zipper a
-insertFirst elem ( left, right ) =
-    ( left ++ [ elem ], right )
-
-
-{-| -}
-insertLast : a -> Zipper a -> Zipper a
-insertLast elem ( left, right ) =
-    ( left, right ++ [ elem ] )
-
-
-{-| -}
-insertLeftOfSplit : a -> Zipper a -> Zipper a
-insertLeftOfSplit elem ( left, right ) =
-    ( elem :: left, right )
-
-
-{-| -}
-insertRightOfSplit : a -> Zipper a -> Zipper a
-insertRightOfSplit elem ( left, right ) =
-    ( left, elem :: right )
+    ( List.map2 fLeft (List.reverse indexes.left) left
+    , List.map2 fRight indexes.right right
+    )
 
 
 {-|

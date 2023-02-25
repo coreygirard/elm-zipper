@@ -191,4 +191,290 @@ suite =
                                 ]
                             }
             ]
+        , describe "Zipper.ListListList.move" <|
+            List.map
+                (\{ i, zipper, leftDir, rightDir, expected } ->
+                    test i <|
+                        \_ ->
+                            zipper
+                                |> Zipper.ListListList.move leftDir rightDir
+                                |> Expect.equal expected
+                )
+                [ { i = "MoveFirst-MoveFirst"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                  , leftDir = MoveFirst
+                  , rightDir = MoveFirst
+                  , expected = Just <| fromTuple ( [], [], [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ] )
+                  }
+                , { i = "MoveFirst-MoveLeft"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                  , leftDir = MoveFirst
+                  , rightDir = MoveLeft
+                  , expected = Just <| fromTuple ( [], [ 1, 2, 3, 4, 5 ], [ 6, 7, 8, 9 ] )
+                  }
+                , { i = "MoveFirst-MoveLeft-fail1"
+                  , zipper = fromTuple ( [], [], [ 7, 8, 9 ] )
+                  , leftDir = MoveFirst
+                  , rightDir = MoveLeft
+                  , expected = Nothing
+                  }
+                , { i = "MoveFirst-MoveNone"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                  , leftDir = MoveFirst
+                  , rightDir = MoveNone
+                  , expected = Just <| fromTuple ( [], [ 1, 2, 3, 4, 5, 6 ], [ 7, 8, 9 ] )
+                  }
+                , { i = "MoveFirst-MoveRight"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                  , leftDir = MoveFirst
+                  , rightDir = MoveRight
+                  , expected = Just <| fromTuple ( [], [ 1, 2, 3, 4, 5, 6, 7 ], [ 8, 9 ] )
+                  }
+                , { i = "MoveFirst-MoveRight-fail1"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [] )
+                  , leftDir = MoveFirst
+                  , rightDir = MoveRight
+                  , expected = Nothing
+                  }
+                , { i = "MoveFirst-MoveLast"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                  , leftDir = MoveFirst
+                  , rightDir = MoveLast
+                  , expected = Just <| fromTuple ( [], [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ], [] )
+                  }
+                , { i = "MoveLeft-MoveFirst"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                  , leftDir = MoveLeft
+                  , rightDir = MoveFirst
+                  , expected = Just <| fromTuple ( [ 1, 2 ], [], [ 3, 4, 5, 6, 7, 8, 9 ] )
+                  }
+                , { i = "MoveLeft-MoveFirst-fail1"
+                  , zipper = fromTuple ( [], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                  , leftDir = MoveLeft
+                  , rightDir = MoveFirst
+                  , expected = Nothing
+                  }
+                , { i = "MoveLeft-MoveLeft"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                  , leftDir = MoveLeft
+                  , rightDir = MoveLeft
+                  , expected = Just <| fromTuple ( [ 1, 2 ], [ 3, 4, 5 ], [ 6, 7, 8, 9 ] )
+                  }
+                , { i = "MoveLeft-MoveLeft-fail1"
+                  , zipper = fromTuple ( [], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                  , leftDir = MoveLeft
+                  , rightDir = MoveLeft
+                  , expected = Nothing
+                  }
+                , { i = "MoveLeft-MoveLeft-2"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [], [ 7, 8, 9 ] )
+                  , leftDir = MoveLeft
+                  , rightDir = MoveLeft
+                  , expected = Just <| fromTuple ( [ 1, 2 ], [], [ 3, 7, 8, 9 ] )
+                  }
+                , { i = "MoveLeft-MoveNone"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                  , leftDir = MoveLeft
+                  , rightDir = MoveNone
+                  , expected = Just <| fromTuple ( [ 1, 2 ], [ 3, 4, 5, 6 ], [ 7, 8, 9 ] )
+                  }
+                , { i = "MoveLeft-MoveNone-fail1"
+                  , zipper = fromTuple ( [], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                  , leftDir = MoveLeft
+                  , rightDir = MoveNone
+                  , expected = Nothing
+                  }
+                , { i = "MoveLeft-MoveRight"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                  , leftDir = MoveLeft
+                  , rightDir = MoveRight
+                  , expected = Just <| fromTuple ( [ 1, 2 ], [ 3, 4, 5, 6, 7 ], [ 8, 9 ] )
+                  }
+                , { i = "MoveLeft-MoveRight-fail1"
+                  , zipper = fromTuple ( [], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                  , leftDir = MoveLeft
+                  , rightDir = MoveRight
+                  , expected = Nothing
+                  }
+                , { i = "MoveLeft-MoveRight-fail2"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [] )
+                  , leftDir = MoveLeft
+                  , rightDir = MoveRight
+                  , expected = Nothing
+                  }
+                , { i = "MoveLeft-MoveLast"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                  , leftDir = MoveLeft
+                  , rightDir = MoveLast
+                  , expected = Just <| fromTuple ( [ 1, 2 ], [ 3, 4, 5, 6, 7, 8, 9 ], [] )
+                  }
+                , { i = "MoveLeft-MoveLast-fail1"
+                  , zipper = fromTuple ( [], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                  , leftDir = MoveLeft
+                  , rightDir = MoveLast
+                  , expected = Nothing
+                  }
+                , { i = "MoveNone-MoveFirst"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                  , leftDir = MoveNone
+                  , rightDir = MoveFirst
+                  , expected = Just <| fromTuple ( [ 1, 2, 3 ], [], [ 4, 5, 6, 7, 8, 9 ] )
+                  }
+                , { i = "MoveNone-MoveLeft"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                  , leftDir = MoveNone
+                  , rightDir = MoveLeft
+                  , expected = Just <| fromTuple ( [ 1, 2, 3 ], [ 4, 5 ], [ 6, 7, 8, 9 ] )
+                  }
+                , { i = "MoveNone-MoveLeft-fail1"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [], [ 7, 8, 9 ] )
+                  , leftDir = MoveNone
+                  , rightDir = MoveLeft
+                  , expected = Nothing
+                  }
+                , { i = "MoveNone-MoveNone"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                  , leftDir = MoveNone
+                  , rightDir = MoveNone
+                  , expected = Just <| fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                  }
+                , { i = "MoveNone-MoveRight"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                  , leftDir = MoveNone
+                  , rightDir = MoveRight
+                  , expected = Just <| fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6, 7 ], [ 8, 9 ] )
+                  }
+                , { i = "MoveNone-MoveRight-fail1"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [] )
+                  , leftDir = MoveNone
+                  , rightDir = MoveRight
+                  , expected = Nothing
+                  }
+                , { i = "MoveNone-MoveLast"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                  , leftDir = MoveNone
+                  , rightDir = MoveLast
+                  , expected = Just <| fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6, 7, 8, 9 ], [] )
+                  }
+                , { i = "MoveRight-MoveFirst"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                  , leftDir = MoveRight
+                  , rightDir = MoveFirst
+                  , expected = Just <| fromTuple ( [ 1, 2, 3, 4 ], [], [ 5, 6, 7, 8, 9 ] )
+                  }
+                , { i = "MoveRight-MoveFirst-fail1"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [], [ 7, 8, 9 ] )
+                  , leftDir = MoveRight
+                  , rightDir = MoveFirst
+                  , expected = Nothing
+                  }
+                , { i = "MoveRight-MoveLeft"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                  , leftDir = MoveRight
+                  , rightDir = MoveLeft
+                  , expected = Just <| fromTuple ( [ 1, 2, 3, 4 ], [ 5 ], [ 6, 7, 8, 9 ] )
+                  }
+                , { i = "MoveRight-MoveLeft-fail1"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [ 5 ], [ 7, 8, 9 ] )
+                  , leftDir = MoveRight
+                  , rightDir = MoveLeft
+                  , expected = Nothing
+                  }
+                , { i = "MoveRight-MoveLeft-fail2"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [], [ 7, 8, 9 ] )
+                  , leftDir = MoveRight
+                  , rightDir = MoveLeft
+                  , expected = Nothing
+                  }
+                , { i = "MoveRight-MoveNone"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                  , leftDir = MoveRight
+                  , rightDir = MoveNone
+                  , expected = Just <| fromTuple ( [ 1, 2, 3, 4 ], [ 5, 6 ], [ 7, 8, 9 ] )
+                  }
+                , { i = "MoveRight-MoveNone-fail1"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [], [ 7, 8, 9 ] )
+                  , leftDir = MoveRight
+                  , rightDir = MoveNone
+                  , expected = Nothing
+                  }
+                , { i = "MoveRight-MoveRight"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                  , leftDir = MoveRight
+                  , rightDir = MoveRight
+                  , expected = Just <| fromTuple ( [ 1, 2, 3, 4 ], [ 5, 6, 7 ], [ 8, 9 ] )
+                  }
+                , { i = "MoveRight-MoveRight-fail1"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [] )
+                  , leftDir = MoveRight
+                  , rightDir = MoveRight
+                  , expected = Nothing
+                  }
+                , { i = "MoveRight-MoveRight-pass2"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [], [ 7, 8, 9 ] )
+                  , leftDir = MoveRight
+                  , rightDir = MoveRight
+                  , expected = Just <| fromTuple ( [ 1, 2, 3, 7 ], [], [ 8, 9 ] )
+                  }
+                , { i = "MoveRight-MoveLast"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                  , leftDir = MoveRight
+                  , rightDir = MoveLast
+                  , expected = Just <| fromTuple ( [ 1, 2, 3, 4 ], [ 5, 6, 7, 8, 9 ], [] )
+                  }
+                , { i = "MoveRight-MoveLast-fail1"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [], [] )
+                  , leftDir = MoveRight
+                  , rightDir = MoveLast
+                  , expected = Nothing
+                  }
+                , { i = "MoveLast-MoveFirst"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                  , leftDir = MoveLast
+                  , rightDir = MoveFirst
+                  , expected = Nothing
+                  }
+                , { i = "MoveLast-MoveLeft"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                  , leftDir = MoveLast
+                  , rightDir = MoveLeft
+                  , expected = Just <| fromTuple ( [ 1, 2, 3, 4, 5 ], [], [ 6, 7, 8, 9 ] )
+                  }
+                , { i = "MoveLast-MoveLeft-fail1"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [], [ 7, 8, 9 ] )
+                  , leftDir = MoveLast
+                  , rightDir = MoveLeft
+                  , expected = Nothing
+                  }
+                , { i = "MoveLast-MoveLeft-fail2"
+                  , zipper = fromTuple ( [], [], [ 7, 8, 9 ] )
+                  , leftDir = MoveLast
+                  , rightDir = MoveLeft
+                  , expected = Nothing
+                  }
+                , { i = "MoveLast-MoveNone"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                  , leftDir = MoveLast
+                  , rightDir = MoveNone
+                  , expected = Just <| fromTuple ( [ 1, 2, 3, 4, 5, 6 ], [], [ 7, 8, 9 ] )
+                  }
+                , { i = "MoveLast-MoveRight"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                  , leftDir = MoveLast
+                  , rightDir = MoveRight
+                  , expected = Just <| fromTuple ( [ 1, 2, 3, 4, 5, 6, 7 ], [], [ 8, 9 ] )
+                  }
+                , { i = "MoveLast-MoveRight-fail1"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [] )
+                  , leftDir = MoveLast
+                  , rightDir = MoveRight
+                  , expected = Nothing
+                  }
+                , { i = "MoveLast-MoveLast"
+                  , zipper = fromTuple ( [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] )
+                  , leftDir = MoveLast
+                  , rightDir = MoveLast
+                  , expected = Just <| fromTuple ( [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ], [], [] )
+                  }
+                ]
         ]

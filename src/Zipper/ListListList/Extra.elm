@@ -480,7 +480,8 @@ setAtRelativeRight i elem zipper =
 sortByKeepIndexes : (a -> comparable) -> Zipper a -> Zipper a
 sortByKeepIndexes f zipper =
     zipper
-        |> moveBothToFirst
+        |> move MoveFirst MoveFirst
+        |> Maybe.withDefault zipper
         |> updateRight (List.sortBy f)
         |> moveToN (positionLeft zipper) (positionRight zipper)
         |> Maybe.withDefault zipper
@@ -490,7 +491,8 @@ sortByKeepIndexes f zipper =
 sortWithKeepIndexes : (a -> a -> Order) -> Zipper a -> Zipper a
 sortWithKeepIndexes f zipper =
     zipper
-        |> moveBothToFirst
+        |> move MoveFirst MoveFirst
+        |> Maybe.withDefault zipper
         |> updateRight (List.sortWith f)
         |> moveToN (positionLeft zipper) (positionRight zipper)
         |> Maybe.withDefault zipper

@@ -10,29 +10,7 @@ import Zipper.ListElemList.Extra exposing (..)
 suite : Test
 suite =
     describe "Zipper.ListElemList.Extra"
-        [ describe "Zipper.ListElemList.Extra.absoluteIndexToPosDists"
-            [ test "handles basic operation" <|
-                \_ ->
-                    let
-                        zipper =
-                            fromTuple ( [ 0, 0, 0 ], 0, [ 0, 0, 0 ] )
-                    in
-                    List.map
-                        (Zipper.ListElemList.Extra.absoluteIndexToPosDists zipper)
-                        (List.range -1 7)
-                        |> Expect.equal
-                            [ Nothing
-                            , Just ( Left, { fromLeft = 0, fromRight = 2 } )
-                            , Just ( Left, { fromLeft = 1, fromRight = 1 } )
-                            , Just ( Left, { fromLeft = 2, fromRight = 0 } )
-                            , Just ( Selected, { fromLeft = 0, fromRight = 0 } )
-                            , Just ( Right, { fromLeft = 0, fromRight = 2 } )
-                            , Just ( Right, { fromLeft = 1, fromRight = 1 } )
-                            , Just ( Right, { fromLeft = 2, fromRight = 0 } )
-                            , Nothing
-                            ]
-            ]
-        , describe "Zipper.ListElemList.Extra.getAt"
+        [ describe "Zipper.ListElemList.Extra.getAt"
             [ test "handles basic operation" <|
                 \_ ->
                     let
@@ -120,116 +98,6 @@ suite =
                             , 7
                             ]
             ]
-        , describe "Zipper.ListElemList.Extra.indexAbsoluteCheck"
-            [ test "handles basic operation" <|
-                \_ ->
-                    let
-                        zipper =
-                            fromTuple ( [ 1, 2, 3 ], 4, [ 5, 6, 7 ] )
-                    in
-                    List.map
-                        (\i -> Zipper.ListElemList.Extra.indexAbsoluteCheck zipper i)
-                        (List.range -1 7)
-                        |> Expect.equal
-                            [ Nothing
-                            , Just Left
-                            , Just Left
-                            , Just Left
-                            , Just Selected
-                            , Just Right
-                            , Just Right
-                            , Just Right
-                            , Nothing
-                            ]
-            ]
-        , describe "Zipper.ListElemList.Extra.indexRangesFromEdges"
-            [ test "handles basic operation" <|
-                \_ ->
-                    fromTuple ( [ 0, 0, 0 ], 0, [ 0, 0, 0 ] )
-                        |> Zipper.ListElemList.Extra.indexRangesFromEdges
-                        |> Expect.equal
-                            { left = [ 2, 1, 0 ]
-                            , selected = 3
-                            , right = [ 2, 1, 0 ]
-                            }
-            ]
-        , describe "Zipper.ListElemList.Extra.indexRangesFromFirst"
-            [ test "handles basic operation" <|
-                \_ ->
-                    fromTuple ( [ 0, 0, 0 ], 0, [ 0, 0, 0 ] )
-                        |> Zipper.ListElemList.Extra.indexRangesFromFirst
-                        |> Expect.equal
-                            { left = [ 2, 1, 0 ]
-                            , selected = 3
-                            , right = [ 4, 5, 6 ]
-                            }
-            ]
-        , describe "Zipper.ListElemList.Extra.indexRangesFromLast"
-            [ test "handles basic operation" <|
-                \_ ->
-                    fromTuple ( [ 0, 0, 0 ], 0, [ 0, 0, 0 ] )
-                        |> Zipper.ListElemList.Extra.indexRangesFromLast
-                        |> Expect.equal
-                            { left = [ 4, 5, 6 ]
-                            , selected = 3
-                            , right = [ 2, 1, 0 ]
-                            }
-            ]
-        , describe "Zipper.ListElemList.Extra.indexRangesFromSelection"
-            [ test "handles basic operation" <|
-                \_ ->
-                    fromTuple ( [ 0, 0, 0 ], 0, [ 0, 0, 0 ] )
-                        |> Zipper.ListElemList.Extra.indexRangesFromSelection
-                        |> Expect.equal
-                            { left = [ -1, -2, -3 ]
-                            , selected = 0
-                            , right = [ 1, 2, 3 ]
-                            }
-            ]
-        , describe "Zipper.ListElemList.Extra.indexRelativeCheck"
-            [ test "handles basic operation" <|
-                \_ ->
-                    let
-                        zipper =
-                            fromTuple ( [ 1, 2, 3 ], 4, [ 5, 6, 7 ] )
-                    in
-                    List.map
-                        (\i -> Zipper.ListElemList.Extra.indexRelativeCheck zipper i)
-                        (List.range -4 4)
-                        |> Expect.equal
-                            [ Nothing
-                            , Just Left
-                            , Just Left
-                            , Just Left
-                            , Just Selected
-                            , Just Right
-                            , Just Right
-                            , Just Right
-                            , Nothing
-                            ]
-            ]
-        , describe "Zipper.ListElemList.Extra.indexRelativeToAbsoluteCheck"
-            [ test "handles basic operation" <|
-                \_ ->
-                    let
-                        zipper =
-                            fromTuple ( [ 1, 2, 3 ], 4, [ 5, 6, 7 ] )
-                    in
-                    List.map
-                        (\i -> Zipper.ListElemList.Extra.indexRelativeToAbsoluteCheck zipper i)
-                        (List.range -4 4)
-                        |> Expect.equal
-                            [ Nothing
-                            , Just 0
-                            , Just 1
-                            , Just 2
-                            , Just 3
-                            , Just 4
-                            , Just 5
-                            , Just 6
-                            , Nothing
-                            ]
-            ]
         , describe "Zipper.ListElemList.Extra.moveToIndex"
             [ test "handles basic operation" <|
                 \_ ->
@@ -271,28 +139,6 @@ suite =
                             , Just (fromTuple ( [ 1, 2, 3, 4 ], 5, [ 6, 7 ] ))
                             , Just (fromTuple ( [ 1, 2, 3, 4, 5 ], 6, [ 7 ] ))
                             , Just (fromTuple ( [ 1, 2, 3, 4, 5, 6 ], 7, [] ))
-                            , Nothing
-                            ]
-            ]
-        , describe "Zipper.ListElemList.Extra.relativeIndexToPosDists"
-            [ test "handles basic operation" <|
-                \_ ->
-                    let
-                        zipper =
-                            fromTuple ( [ 0, 0, 0 ], 0, [ 0, 0, 0 ] )
-                    in
-                    List.map
-                        (Zipper.ListElemList.Extra.relativeIndexToPosDists zipper)
-                        (List.range -4 4)
-                        |> Expect.equal
-                            [ Nothing
-                            , Just ( Left, { fromLeft = 0, fromRight = 2 } )
-                            , Just ( Left, { fromLeft = 1, fromRight = 1 } )
-                            , Just ( Left, { fromLeft = 2, fromRight = 0 } )
-                            , Just ( Selected, { fromLeft = 0, fromRight = 0 } )
-                            , Just ( Right, { fromLeft = 0, fromRight = 2 } )
-                            , Just ( Right, { fromLeft = 1, fromRight = 1 } )
-                            , Just ( Right, { fromLeft = 2, fromRight = 0 } )
                             , Nothing
                             ]
             ]
