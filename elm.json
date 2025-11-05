@@ -7,11 +7,13 @@
   "exposed-modules": [
     "Zipper.ListList",
     "Zipper.ListList.Advanced",
+    "Zipper.ListList.Extra",
     "Zipper.ListElemList",
     "Zipper.ListElemList.Advanced",
     "Zipper.ListElemList.Extra",
     "Zipper.ListListList",
     "Zipper.ListListList.Advanced",
+    "Zipper.ListListList.Extra",
     "Zipper.StringCharString",
     "Zipper.StringString",
     "Zipper.StringStringString",
@@ -21,8 +23,9 @@
   "dependencies": {
     "elm/core": "1.0.0 <= v < 2.0.0",
     "elm-community/list-extra": "8.7.0 <= v < 9.0.0",
-    "elm-community/result-extra": "2.4.0 <= v < 3.0.0",
-    "elm-explorations/test": "2.0.0 <= v < 3.0.0"
+    "elm-community/result-extra": "2.4.0 <= v < 3.0.0"
   },
-  "test-dependencies": {}
+  "test-dependencies": {
+    "elm-explorations/test": "2.0.0 <= v < 3.0.0"
+  }
 }
