@@ -1,6 +1,7 @@
 # elm-zipper
 
 
+
 | shape                      | allows any types                 | `a == b == c`           | `a == b == c == Char`         |
 |:---------------------------|:---------------------------------|:------------------------|:------------------------------|
 | `(List a, List b)`         | [Zipper.ListList.Advanced]()     | [Zipper.ListList]()     | [Zipper.StringString]()       |
